@@ -1,0 +1,12 @@
+<a href="{% url 'profile' member.profile.slug %}">
+    <li class="flex space-x-3 shadow p-3 rounded-lg">
+        <img src="{{ member.profile.profile_picture.url }}" alt="Member" class="w-10 h-10 rounded-full">
+        <div>
+            <p class="text-gray-800 font-medium dark:text-gray-300">{{ member.username }}</p>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Joined {{ member.date_joined|date:"M d, Y" }}</p>
+        </div>
+        {% if member in group.admin.all %}
+            <span class="text-blue-500">ADMIN</span>
+        {% endif %}
+    </li>
+</a>

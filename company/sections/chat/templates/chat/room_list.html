@@ -1,0 +1,105 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+<div class="grid grid-cols-2 gap-4 mb-4">
+    <a href="{% url 'chat-list'%}">
+        <div class="max-w-3xl mx-auto p-4  shadow-md rounded-lg w-full flex justify-center">
+            <h2 class="text-2xl font-semibold dark:text-white mb-4 text-gray-600">Chats</h2>
+        </div>
+    </a>
+
+    <a href="{% url 'group-list'%}">
+        <div class="max-w-3xl mx-auto p-4 rounded-lg w-full flex justify-center">
+            <h2 class="text-2xl dark:text-white font-semibold mb-4">Groups</h2>
+        </div>
+    </a>
+</div>
+
+<div class="max-w-3xl mx-auto p-4 rounded-lg w-full" style="max-width: 600px;">
+    <h2 class="text-2xl font-semibold dark:text-white mb-4">Groups</h2>
+
+    {% if group_users %}
+        <ul id="group-list" class="">
+            {% for group, details in group_users %}
+                <li data-id="{{ group.id }}" class="p-4 flex justify-between items-center">
+                    <a href="{% url 'chat-room' group.slug %}" class="flex items-center space-x-3 w-full">
+                        <img src="{{ group.profile_picture.url }}" alt="Profile Pic" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="text-lg dark:text-gray-300 font-medium truncate">{{ group }}</span>
+                                <span class="text-sm text-gray-500">{{ details.timestamp|date:"m/d/y" }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-400">
+                                    {{ details.sender }}:
+                                    {{ details.last_message|truncatechars:28|default:"No messages yet" }}
+                                </span>
+                                {% if details.unread_count > 0 %}
+                                    <span id="chat-badge" class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ details.unread_count }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-gray-500">No recent chats.</p>
+    {% endif %}
+</div>
+<script>
+    const groupListSocket = new WebSocket("ws://" + window.location.host + "/ws/group-list/");
+
+    groupListSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        // console.log(data);
+        // Extract data from WebSocket event
+        const groupSlug = data.slug;
+        const groupName = data.name;
+        const group_id = data.id;
+        const profilePicture = data.picture || "/static/default-group.png";
+        const timestamp = data.timestamp;
+        const lastMessage = data.message || "No messages yet";
+        const sender = data.sender;
+        const unreadCount = data.unread_count || 0;
+        const totalCount = data.chat_count || 0;
+        // const groupCount = "{{ group_count }}"
+    
+        // Check if the group item already exists
+        const groupListContainer = document.querySelector("#group-list"); // Make sure the UL has this ID
+        // console.log(data)
+        if (!groupListContainer) return;
+            const existingItem = document.querySelector(`[data-id="${group_id}"]`);
+
+        // Remove existing chat item for same user to avoid duplicates
+        if (existingItem) {
+            existingItem.remove();
+        }
+        const badge = unreadCount > 0
+            ? `<span id="chat-badge" class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">${unreadCount}</span>`
+            : '';
+    
+        const groupItemHTML = `
+            <li data-id="${group_id}" class="p-4 flex justify-between items-center">
+                <a href="/chat/room/${groupSlug}/" class="flex items-center space-x-3 w-full">
+                    <img src="${profilePicture}" alt="Profile Pic" class="w-8 h-8 rounded-full">
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <span class="text-lg font-medium">${groupName}</span>
+                            <span class="text-sm text-gray-500">${timestamp}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">${sender}: ${lastMessage}</span>
+                            ${badge}
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+            // Insert new group item at the top
+        groupListContainer.insertAdjacentHTML("afterbegin", groupItemHTML);
+        
+    };
+    
+</script>
+{% endblock %}

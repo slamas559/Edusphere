@@ -1,0 +1,99 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="w-full mx-auto p-2 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg" style="height:80vh;">
+    <!-- Chat Header -->
+     <a href="{% url 'profile' receiver.profile.slug %}">
+    <div class="flex items-center border-b pb-2 mb-4">
+        <img class="w-8 h-8 rounded-full" src="{{ receiver.profile.profile_picture.url }}">
+        <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ receiver.username }}</h2>
+    </div>
+    </a>
+
+    <!-- Chat Messages -->
+    <div id="chat-messages" class="w-full overflow-x-hidden overflow-y-auto p-2 scrollbar-hidden bg-gray-100 dark:bg-gray-900 rounded-lg" style="height: 75vh;">
+        {% if messages %}
+            <div id="scroll-anchor"></div>
+        {% endif %}
+        {% for message in messages %}
+            <div class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
+                <div style="max-width:80%" class="inline-block px-4 py-2 rounded-lg text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                        <p style="font-size:14px;">{{ message.content }}
+                            <span style="font-size:10px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
+                            {{ message.timestamp|date:"H:i,M-d" }}
+                            </span>
+                        </p>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-gray-500 text-center">No messages yet. Say hi!</p>
+        {% endfor %}
+        <div id="scroll-anchor"></div>
+    </div>
+
+    <!-- Message Input -->
+    <form id="chat-form" class="mt-4">
+        {% csrf_token %}
+        <div class="flex space-x-2">
+            <textarea type="text" rows="1" id="message-input" class="flex-1 resize-none max-h-64 border bg-gray-100 dark:bg-gray-900 dark:text-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message..."></textarea>
+            <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-r-lg">Send</button>
+        </div>
+    </form>
+</div>
+
+<!-- JavaScript for WebSocket -->
+<script>
+    const chatSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/private/{{ receiver.username }}/'
+    );
+
+    chatSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const messageContainer = document.getElementById('chat-messages');
+     
+        if (!data.message || data.message.trim() === '') {
+            return; // Stop execution if the message is invalid
+        }
+        // Append new message
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('mb-2');
+
+        if (data.sender === "{{ request.user.username }}") {
+            messageDiv.classList.add('text-right');
+        }
+
+        messageDiv.innerHTML = `
+            <p style="font-size:14px;" class="inline-block text-left px-4 py-2 rounded-lg ${data.sender === "{{ request.user.username }}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
+                ${data.message}
+                <span style="font-size:10px;" class="${data.sender === "{{ request.user.username }}"? 'text-gray-800': 'text-gray-500'} mt-1">${data.timestamp}</span>
+            </p>
+            
+        `;
+
+        messageContainer.appendChild(messageDiv);
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    };
+
+    document.getElementById('chat-form').onsubmit = function(event) {
+        event.preventDefault();
+        const messageInput = document.getElementById('message-input');
+
+        chatSocket.send(JSON.stringify({
+            'message': messageInput.value,
+            'sender': "{{ request.user.username }}"
+        }));
+
+        messageInput.value = '';  // Clear input field
+    };
+
+    window.addEventListener("DOMContentLoaded", function () {
+        const anchor = document.getElementById("scroll-anchor");
+        const messageContainer = document.getElementById("chat-messages")
+        if (anchor) {
+            // anchor?.scrollIntoView({block: "end" });
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,17 @@
+@import "tailwindcss";
+@import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
+@source "../../node_modules/flowbite";
+
+@source "../../../**/*.{html, py, js, css}";
+
+@theme{
+    --color-primary: #48bb78; /* Tailwind's gray-700 */
+    --color-secondary: #2d3748; /* Tailwind's gray-800 */
+}
+
+.bg-green-500 {
+  background-color: #48bb78; /* Tailwind's green-500 */
+  display: flex;
+  justify-content: ;
+}

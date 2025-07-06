@@ -1,0 +1,157 @@
+{% extends "dashboard/base.html" %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+<div class="container mx-auto">
+    <!-- Product Details -->
+    <div class="bg-white dark:bg-gray-900 rounded-lg p-2 md:p-6 lg:flex lg:gap-8">
+        <!-- Product Image -->
+        <div class="lg:w-1/2">
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full object-cover rounded-lg shadow-md" style="height: 550px;">
+        </div>
+
+        <!-- Product Info -->
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 mt-5 gap-6">
+            <!--<div class="flex items-center justify-center">
+                <div class="bg-blue-500 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition">
+                    <span class="text-lg font-bold">Product Details</span>
+                </div>-->
+            <!--first tab-->
+            <div class="w-full rounded-lg bg-white dark:bg-gray-900">
+                <h1 class="text-3xl font-bold dark:text-white text-gray-900">{{ product.title }}</h1>
+                <p class="mt-6 text-2xl font-semibold text-blue-600">${{ product.price }}</p>
+
+                <p class="text-gray-700 dark:text-gray-500 text-xs mt-1">Listed on {{ product.created_at|date:"F d, Y" }}</p>
+
+                <p class="text-lg font-semibold dark:text-white text-gray-900 mt-6">Description:</p>
+                <p class="mt-4 text-gray-700 dark:text-gray-400 text-sm leading-relaxed">
+                    {{ product.description }}
+                </p>
+
+                <div class="mt-6 flex gap-4">
+                    <button class="bg-blue-500 text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition">
+                        Add to Cart
+                    </button>
+                    {% if product.seller != user %}
+                        <a href="{% url 'private-chat' product.seller.username %}" class="bg-blue-500 text-center text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition">
+                            Chat with seller
+                        </a>
+                    {% else %}
+                        <a href="{% url 'product-update' product.id %}" class="bg-blue-500 text-center text-white px-5 py-2 rounded-md text-sm font-medium hover:bg-blue-600 transition">
+                            Edit Product
+                        </a>
+                    {% endif %}
+                </div>
+
+                <p class="text-lg font-semibold dark:text-white text-gray-900 mt-6">Seller Information:</p>
+                <div class="flex mt-4 justify-between items-center">
+                    <a href="{% url 'profile' product.seller.profile.slug %}" class="flex items-center space-x-3">
+                        <img src="{{ product.seller.profile.profile_picture.url }}" alt="Profile Pic" class="w-8 h-8 rounded-full">
+                        <div class="flex-1">
+                            <span class="text-lg font-medium dark:text-gray-300">{{ product.seller.username }}</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="flex mt-4 justify-between items-center">
+                    <span class="text-lg font-medium dark:text-gray-300">Location:</span>
+                    <span class="text-lg font-medium text-gray-500 dark:text-gray-400">{{ product.location }}</span>
+                </div>
+                <div class="flex mt-4 justify-between items-center">
+                    <span class="text-lg font-medium dark:text-gray-300">Phone:</span>
+                    <span class="text-lg font-medium text-gray-500 dark:text-gray-400">+234 803 123 4567</span>
+                </div>
+                    
+            </div>
+            <div class="w-full rounded-lg bg-white dark:bg-gray-900">
+                <!--second tab-->
+                <p class="text-lg font-semibold dark:text-white text-gray-900 mt-6">Review:</p>
+                {% for review in reviews %}
+                    <div class="flex mt-4 justify-between items-center space-x-3">
+                        <div class="items-center space-x-3">
+                            <a href="{% url 'profile' review.buyer.profile.slug %}" class="flex items-center space-x-3">
+                                <img src="{{ review.buyer.profile.profile_picture.url }}" alt="Profile Pic" class="w-8 h-8 rounded-full">
+                                <div class="flex-1">
+                                    <span class="text-lg font-medium dark:text-gray-300">{{ review.buyer.username }}</span>
+                                </div>
+                            </a>
+                            <div class="border-gray-400 dark:bg-gray-800 p-3 rounded-lg mt-2 bg-gray-100">
+                                <p class="text-sm">
+                                    {% if review.rating == 5 %}
+                                    ⭐⭐⭐⭐⭐
+                                    {% elif review.rating == 4 %}
+                                    ⭐⭐⭐⭐
+                                    {% elif review.rating == 3 %}
+                                    ⭐⭐⭐
+                                    {% elif review.rating == 2 %}
+                                    ⭐⭐
+                                    {% elif review.rating == 1 %}
+                                    ⭐
+                                    {% endif %}
+                                </p>
+                                <span class="text-sm dark:text-gray-300">{{ review.comment }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+
+                <div class="shadow-lg mt-5 rounded-lg p-6 max-w-lg">
+                    <form method="post" enctype="multipart/form-data" class="mt-4 space-y-4 flex flex-col gap-2 max-w-3xl mx-auto">
+                        {% csrf_token %}
+            
+                        <!-- Loop through form fields -->
+                        {% for field in form %}
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-1">
+                                    <!--{{ field.label }}-->
+                                </label>
+                                {% if field.label == "Rating" %}
+                                    {{ field|add_class:"w-16 dark:bg-gray-900 dark:text-gray-300 flex-1 border rounded-lg p-2"}}<span class="dark:text-white text-gray-500 ml-3">rating</span>
+                                {% else %}
+                                    {{ field|add_class:"w-full dark:bg-gray-900 dark:text-gray-300 sm:w-18 flex-1 border rounded-lg p-2"|attr:"rows:3"|attr:"placeholder:comment here..." }}
+                                {% endif %}
+                                {% if field.help_text %}
+                                    <p class="text-xs text-gray-500 mt-1">{{ field.help_text }}</p>
+                                {% endif %}
+                                
+                                {% for error in field.errors %}
+                                    <p class="text-sm text-red-500 mt-1">{{ error }}</p>
+                                {% endfor %}
+                            </div>
+                        {% endfor %}
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-semibold transition duration-200">
+                            Send review
+                        </button>
+                    </form>
+                </div>
+            </div>        
+
+                
+        </div>
+    </div>
+
+    <!-- Related Products Section -->
+    <div class="container mx-auto p-6">
+        <h2 class="text-3xl font-bold text-gray-800 dark:text-white mb-6">Related Products</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for product in related_products %}
+            <div class="bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden transition-transform transform hover:scale-105">
+            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-48 object-cover">
+            <div class="p-4">
+                <h2 class="text-lg font-semibold dark:text-white text-gray-900">{{ product.title }}</h2>
+                <p class="text-blue-800 dark:text-gray-300 text-sm mt-1">${{ product.price }}</p>
+                <p class="text-blue-400 dark:text-gray-500 text-sm mt-1">📍 {{ product.location }}</p>
+                <div class="mt-3 flex items-center">
+                    <a href="{% url 'product-detail' product.id %}">
+                        <button class="bg-blue-500 text-white px-5 py-2 rounded-md text-sm hover:bg-blue-600">View Details</button>
+                    </a>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+        </div>
+    </div>
+    
+{% endblock %}

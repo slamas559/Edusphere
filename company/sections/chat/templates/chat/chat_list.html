@@ -1,0 +1,90 @@
+{% extends "dashboard/base.html" %}
+{% block content %}
+<div class="grid grid-cols-2 gap-4 mb-4">
+{% comment %} <div class="flex w-full items-center justify-between"> {% endcomment %}
+    <a href="{% url 'chat-list'%}">
+        <div class="max-w-3xl mx-auto p-4 rounded-lg w-full flex justify-center">
+            <h2 class="text-2xl dark:text-white font-semibold mb-4">Chats</h2>
+        </div>
+    </a>
+    <a href="{% url 'group-list'%}">
+        <div class="max-w-3xl mx-auto p-4 shadow-md rounded-lg w-full flex justify-center" >
+            <h2 class="text-2xl dark:text-white font-semibold mb-4 text-gray-600">Groups</h2>
+        </div>
+    </a>
+</div>
+
+<div class="max-w-3xl mx-auto p-4 rounded-lg w-full" style="max-width: 600px;">
+    <h2 class="text-2xl dark:text-white font-semibold mb-4">Recent Chats</h2>
+
+    {% if chat_users %}
+        <ul class="">
+            {% for user, details in chat_users %}
+                <li class="list-chat p-4 hover:bg-gray-100 dark:hover:bg-gray-800 flex justify-between items-center transition duration-200 ease-in" data-username="{{ user.username }}">
+                    <a href="{% url 'private-chat' user.username %}" class="flex items-center space-x-3 w-full">
+                        <img src="{{ user.profile.profile_picture.url }}" alt="Profile Pic" class="w-10 h-10 rounded-full">
+                        <div class="flex-1">
+                            <div class="flex justify-between">
+                                <span class="text-lg dark:text-gray-300 font-medium">{{ user.username }}</span>
+                                <span class="text-sm text-gray-500">{{ details.timestamp|date:"m/d/y" }}</span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-sm text-gray-400">{{ details.last_message|truncatechars:28|default:"No messages yet" }}</span>
+                                {% if details.unread_count > 0 %}
+                                    <span id="chat-badge" class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ details.unread_count }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-gray-500">No recent chats.</p>
+    {% endif %}
+</div>
+<script>
+    const chatListSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat-list/'
+    );
+
+    chatListSocket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        console.log(data);
+    
+        const list = document.querySelector('.divide-y');
+        if (!list) return;
+    
+        // Remove existing chat item for same user to avoid duplicates
+            const existingItem = list.querySelector(`[data-username="${data.sender}"]`);
+        if (existingItem) {
+            existingItem.remove();
+        }
+    
+        const newItem = `
+            <li class="list-chat p-4 flex justify-between items-center" data-username="${data.sender}">
+                <a href="/chat/private/${data.sender}/" class="flex items-center space-x-3 w-full">
+                    <img src="${data.picture}" alt="Profile Pic" class="w-8 h-8 rounded-full">
+                    <div class="flex-1">
+                        <div class="flex justify-between">
+                            <span class="text-lg font-medium">${data.sender}</span>
+                            <span class="text-sm text-gray-500">${data.timestamp}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-sm text-gray-500">${data.message}</span>
+                            ${data.unread_count > 0
+                                ? `<span id="chat-badge" class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">${data.unread_count}</span>`
+                                : ''}
+                        </div>
+                    </div>
+                </a>
+            </li>
+        `;
+    
+        list.insertAdjacentHTML('afterbegin', newItem);
+        
+    };    
+</script>
+
+    
+{% endblock %}

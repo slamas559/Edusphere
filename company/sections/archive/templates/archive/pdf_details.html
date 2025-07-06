@@ -1,0 +1,45 @@
+{% extends "dashboard/base.html" %}
+{% load static %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8 py-10">
+  <div class="bg-white dark:bg-gray-900 shadow-xl rounded-2xl overflow-hidden">
+    
+    <!-- Cover Image -->
+    {% if pdf.cover_image %}
+      <img src="{{ pdf.cover_image.url }}" alt="{{ pdf.title }}" class="w-full h-96 object-cover">
+    {% else %}
+      <div class="w-full h-96 bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
+        <span class="text-gray-500 dark:text-gray-400">No Preview Available</span>
+      </div>
+    {% endif %}
+
+    <div class="p-6">
+      <!-- Title -->
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">{{ pdf.title|default:pdf.file.name|replace:"/,"|replace:"pdfs,"|replace:"_,-"|replace:".pdf," }}</h1>
+      
+      <!-- Description -->
+      <p class="text-gray-600 dark:text-gray-300 mb-4">{{ pdf.description|default:"No description provided." }}</p>
+
+      <!-- Metadata -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
+        <p><strong>Uploaded By:</strong> {{ pdf.uploaded_by.username }}</p>
+        <p><strong>Uploaded On:</strong> {{ pdf.uploaded_at|date:"F j, Y, g:i a" }}</p>
+        <p><strong>Author:</strong> {{ pdf.author }}</p>
+        <p><strong>Pages:</strong> {{ pdf.page_count }}</p>
+      </div>
+
+      <!-- Download/View PDF -->
+      <div class="flex space-x-4">
+        <a href="{{ pdf.file.url }}" target="_blank" class="dark:text-white text-gray-600 px-5 py-2 hover:scale-105 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200">
+          📖 View PDF
+        </a>
+        <a href="{{ pdf.file.url }}" download class="dark:text-white text-gray-600 px-5 py-2 hover:scale-105 rounded hover:bg-green-700 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200">
+          ⬇ Download
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

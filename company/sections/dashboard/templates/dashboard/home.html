@@ -1,0 +1,81 @@
+{% extends 'dashboard/base.html'%}
+{% load static %}
+
+{% block content %}
+<div class="p-2 bg-gray-100 dark:bg-gray-900">
+  <!-- Welcome Section -->
+  <div class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Welcome, <span class="text-gray-600 dark:text-gray-400">{{ request.user.username }}!</span> ✨</h1>
+    <p class="text-gray-500 mt-2 italic dark:text-gray-300">{{quote}} by, {{author}}</p>
+  </div>
+
+  <!-- Cards Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <!-- Notifications -->
+    <div class="bg-white dark:bg-gray-800 h-64 rounded-lg shadow-lg p-5 items-center">
+      <div class="text-blue-500">
+        <i class="fa fa-bell text-4xl"></i>
+      </div>
+      <h2 class="font-semibold text-xl dark:text-gray-300 mt-2">Notifications</h2>
+      <div class="flex flex-col items-center mt-8">
+        <p class="text-gray-500 dark:text-gray-400 text-sm">You have {{ notification_count }} new notifications</p>
+        <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Stay updated with your tasks</p>
+        <a href="{% url 'notification-inbox' %}" class="text-blue-600 text-sm dark:text-gray-300 mt-2 hover:underline">View Notifications</a>
+      </div>
+    </div>
+
+    <!-- Courses -->
+    <div class="bg-white shadow-lg p-5 h-64 rounded-lg dark:bg-gray-800 flex-col items-center">
+      <div class="text-blue-500">
+        <i class="fa fa-book text-4xl"></i>
+      </div>
+      <h2 class="font-semibold text-xl dark:text-gray-300 mt-2">Your Courses</h2>
+      <div class="flex flex-col items-center mt-8">
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Access and manage courses</p>
+        <a href="#" class="text-green-600 text-sm dark:text-gray-300 mt-2 hover:underline">View Courses</a>
+      </div>
+      </div>
+
+    <!-- Upcoming Deadlines -->
+    <div class="bg-white shadow-lg rounded-lg p-5 h-64 dark:bg-gray-800 items-center">
+      <div class="text-yellow-500">
+        <i class="fa fa-calendar-alt text-4xl"></i>
+      </div>
+      <h2 class="font-semibold text-xl dark:text-gray-300 mt-2">Deadlines</h2>
+      <div class="flex flex-col items-center mt-8">
+        <p class="text-gray-500 dark:text-gray-400 text-sm">Stay on top of tasks</p>
+        <a href="#" class="text-yellow-600 text-sm dark:text-gray-300 mt-2 hover:underline">Check Calendar</a>
+      </div>
+      </div>
+
+    <!-- AI Helper -->
+    {% comment %} <div class="bg-white shadow-lg dark:bg-gray-800 p-5 flex flex-col items-center">
+      <div class="text-gray-500">
+        <img width="20" height="20" src="https://img.icons8.com/ios/50/sparkling.png" alt="sparkling"/>
+      </div>
+      <h2 class="font-semibold dark:text-gray-300 mt-2">Ask AI</h2>
+
+      <p class="text-gray-500 text-sm dark:text-gray-400">Get assignment help</p>
+      <a href="#" class="text-purple-600 dark:text-gray-300 text-sm mt-2 hover:underline">Chat Now</a>
+    </div> {% endcomment %}
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="grid grid-cols-1 md:grid-cols-2 h-64 lg:grid-cols-2 gap-6 mt-10">
+    <!-- Resource Library -->
+    <div class="bg-white p-6 rounded-lg border-l border-gray-200 shadow-lg dark:bg-gray-800">
+      <h3 class="text-2xl font-semibold dark:text-gray-300 text-gray-800 mb-4">Resource Library 📚</h3>
+      <p class="text-gray-500 dark:text-gray-400">Browse uploaded PDFs, study materials, and more.</p>
+      <a href="{% url 'archive' %}" class="mt-4 dark:text-gray-300 inline-block text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Browse Resources</a>
+    </div>
+
+    <!-- Join Study Groups -->
+    <div class="bg-white p-6 rounded-lg border-l border-gray-200 shadow-lg dark:bg-gray-800">
+      <h3 class="text-2xl dark:text-gray-300 font-semibold text-gray-800 mb-4">Join Study Groups 💬</h3>
+      <p class="text-gray-500 dark:text-gray-400">Collaborate and discuss with peers.</p>
+      <a href="{% url 'group-home' %}" class="mt-4 dark:text-gray-300 inline-block text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Find a Group</a>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

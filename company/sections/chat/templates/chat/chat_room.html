@@ -1,0 +1,145 @@
+{% extends "dashboard/base.html" %}
+{% load contains_user %}
+{% load static %}
+
+{% block content %}
+<div class="w-full mx-auto p-3 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg">
+    <div class="flex items-center border-b pb-2 mb-4">
+        <img class="w-8 h-8 rounded-full" src="{{ room.profile_picture.url }}">
+        <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ room.name }}</h2>
+    </div>
+    <div id="chat-messages" class="overflow-y-auto scrollbar-hidden p-3 bg-gray-100 dark:bg-gray-900 rounded-lg p-0" style="height:75vh;">
+        {% if request.user in room.members.all %}
+            {% with unread_marked=False %}
+                {% for message in messages %}
+                    {% if not message.read_by.all|contains_user:request.user and not unread_marked %}
+                        {% with unread_marked=True %}
+                            <div id="first-unread" class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
+                        {% endwith %}
+                    {% else %}
+                        <div class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
+                    {% endif %}
+                        <div style="max-width:80%" class="inline-block">
+                            {% if message.sender == request.user %}
+                                <div class="px-3 py-2 rounded-lg space-x-3 w-full text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                                    <p style="font-size:14px;">{{ message.content }}
+                                        <span style="font-size:10px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
+                                        {{ message.timestamp|date:"H:i,M-d" }}
+                                        </span>
+                                    </p>
+                                </div>
+                            {% else %}
+                                <div class="flex space-x-2 w-full">
+                                    <img class="w-8 h-8 rounded-full" src="{{ message.sender.profile.profile_picture.url }}">
+                                    <div class="px-2 py-1 rounded-lg {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                                        <strong>{{ message.sender.username }}</strong> 
+                                        <p style="font-size:14px;">{{ message.content }}
+                                            <span style="font-size:10px;" class="text-gray-500 mt-1">
+                                                {{ message.timestamp|date:"H:i,M-d" }}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p class="text-gray-500 text-center">No messages yet. Say hi!</p>
+                {% endfor %}
+            {% endwith %}
+            {% else %}
+                <p class="text-gray-500 text-center">Join Room to send message!!</p>
+                
+        {% endif %}        
+        <div id="scroll-anchor"></div>
+    </div>
+    <!-- Message Input -->
+    {% if request.user in room.members.all %}
+        <form id="chat-form" class="mt-4">
+            {% csrf_token %}
+            <div class="flex">
+                <input type="text" id="message-input" class="flex-1 border bg-gray-100 dark:bg-gray-900 dark:text-gray-300 rounded-l-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Type a message...">
+                <button type="submit" class="bg-blue-500 text-white px-6 py-2 rounded-r-lg">Send</button>
+            </div>
+        </form>
+    {% endif %}
+</div>
+
+<script>
+    const chatSocket = new WebSocket("ws://" + window.location.host + "/ws/chat/{{ room.slug }}/");
+
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const messageContainer = document.getElementById('chat-messages');
+
+        // Append new message
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('mb-2');
+        const user = '{{ request.user }}';
+        const roomMember = '{{ room.members.all }}';
+        // console.log(user);
+        // console.log(roomMember);
+
+        if ( roomMember.includes(user) ) {
+            if (data.sender === "{{ request.user.username }}") {
+                messageDiv.classList.add('text-right');
+                messageDiv.innerHTML += `
+                <div class="inline-block px-4 py-2 rounded-lg text-left ${data.sender === "{{ request.user.username }}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
+                    <p style="font-size:14px;">${data.message}
+                        <span style="font-size:10px;" class="text-gray-800 mt-1">${data.timestamp}</span>
+                    </p>
+                </div>
+            `;
+            }else{
+                messageDiv.innerHTML += `
+                <div class="inline-block">
+                <div class="flex space-x-2 w-full">
+                    <img class="w-8 h-8 rounded-full" src="${data.picture}">
+                    <div class="px-2 py-1 rounded-lg ${data.sender === "{{request.user.username}}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
+                        <strong>${data.sender}</strong> 
+                        <p style="font-size:14px;">${data.message}
+                            <span style="font-size:10px;" class="text-gray-500 mt-1">
+                                ${data.timestamp}
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            `;
+            }
+        }
+
+        
+        messageContainer.appendChild(messageDiv);
+        messageContainer.scrollTop = messageContainer.scrollHeight;
+    };
+
+    document.getElementById('chat-form').onsubmit = function(event) {
+        event.preventDefault();
+        const messageInput = document.getElementById('message-input');
+
+        chatSocket.send(JSON.stringify({
+            'message': messageInput.value,
+            'sender': "{{ request.user.username }}"
+        }));
+
+        messageInput.value = '';  // Clear input field
+    };
+
+    window.addEventListener("DOMContentLoaded", function () {
+        const unread = document.getElementById("first-unread");
+        const messageContainer = document.getElementById("chat-messages")
+
+        if (unread) {
+            unread.scrollIntoView({block: "start" });
+            // console.log("unread")
+        } else {
+            const anchor = document.getElementById("scroll-anchor");
+            // console.log("no-unread")
+            // anchor?.scrollIntoView({block: "end" });
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+
+            
+        }
+    });
+</script>
+{% endblock %}

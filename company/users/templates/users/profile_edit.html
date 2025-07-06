@@ -1,0 +1,80 @@
+{% extends "dashboard/base.html" %}
+{% load widget_tweaks %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg">
+    <h2 class="text-2xl font-bold text-gray-800 dark:text-white text-center mb-6">Edit Profile</h2>
+
+    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+        {% csrf_token %}
+
+        <!-- Profile Picture Upload -->
+        <div class="flex items-center space-x-4">
+            <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture"
+                 class="w-24 h-24 rounded-full border-2 border-gray-300 shadow-md">
+            <div class="flex flex-col">
+                <label class="text-sm font-medium dark:text-gray-400 text-gray-700">Change Profile Picture</label>
+                <input type="file" name="profile_picture" class="mt-1 text-sm text-gray-500">
+            </div>
+        </div>
+
+        <!-- Username Field -->
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700">Username</label>
+            {{ u_form.username|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+        </div>
+
+        <!-- Email Field -->
+        <div>
+            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700">Email</label>
+            {{ u_form.email|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">First Name</label>
+            {{ u_form.first_name|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+            {% if form.first_name.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">Last Name</label>
+            {{ u_form.last_name|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+            {% if form.last_name.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.school.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">School</label>
+            {{ p_form.school|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+            {% if form.school.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.school.errors }}</p>
+            {% endif %}
+        </div>
+
+        <div class="mb-4">
+            <label for="{{ form.educationlevel.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">School Level</label>
+            {{ p_form.education_level|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+            {% if form.educationlevel.errors %}
+                <p class="text-red-500 text-xs mt-1">{{ form.educationlevel.errors }}</p>
+            {% endif %}
+        </div>
+
+        <!-- Bio Field -->
+        <div>
+            <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700">Bio</label>
+            {{ p_form.bio|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
+        </div>
+
+        <!-- Save Button -->
+        <div class="text-center">
+            <button type="submit"
+                    class="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+{% endblock %}

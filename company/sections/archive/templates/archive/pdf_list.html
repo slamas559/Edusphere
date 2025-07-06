@@ -1,0 +1,43 @@
+{% extends "dashboard/base.html" %}
+{% load custom_filters %}
+{% block content %}
+<div class="p-1 bg-gray-100 dark:bg-gray-900 min-h-screen">
+  <h1 class="text-3xl font-bold dark:text-white text-gray-800 mb-4">Archive</h1>
+    <div class="flex items-center justify-between md:justify-end space-x-3 p-2">
+        <a href="{% url 'pdf-upload' %}" class="bg-gray-800 text-white py-4 px-6 rounded-lg mr-3 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit">
+            Upload
+        </a>
+        <form method="get"class="flex md:w-1/2 space-x-3">
+            {% csrf_token %}
+            <input name="q" value="{{ request.GET.q }}" placeholder="Search by name, uploader" class="w-full h-14 border-gray-400 rounded-lg dark:bg-gray-900 p-3 dark:text-gray-300 border focus:outline-none">
+        </form>
+    </div>
+
+  {% if pdfs %}
+    <div class="grid gap-6 grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4">
+      {% for pdf in pdfs %}
+      <a href="{% url 'pdf-detail' pdf.pk %}" class="bg-white dark:bg-gray-800 rounded-lg shadow-md hover:shadow-lg transition duration-300 overflow-hidden">
+        {% if pdf.cover_image %}
+          <img src="{{ pdf.cover_image.url }}" alt="Cover Image" class="h-48 w-full object-cover">
+        {% else %}
+          <div class="h-48 bg-gray-300 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400">
+            No Preview
+          </div>
+        {% endif %}
+        <div class="p-4">
+          <h3 class="text-sm md:text-base font-semibold text-gray-800 dark:text-white truncate">{{ pdf.title|default:pdf.file.name|replace:"/,"|replace:"pdfs,"|replace:"_,"|replace:".pdf," }}</h3>
+          <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">📄 {{ pdf.page_count|default:0 }} pages</p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Uploaded by <span class="font-medium">{{ pdf.uploaded_by.username }}</span></p>
+          <p class="text-sm text-gray-500 dark:text-gray-400">Author: <span class="font-medium">{{ pdf.author }}</span></p>
+          <p class="text-sm text-gray-400 dark:text-gray-500 mt-1">{{ pdf.uploaded_at|date:"M d, Y" }}</p>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="flex justify-center items-center h-64">
+      <h2 class="text-2xl text-gray-500 dark:text-gray-400">No PDFs found 📂</h2>
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

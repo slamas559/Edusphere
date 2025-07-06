@@ -1,0 +1,58 @@
+{% extends "dashboard/base.html"%}
+{% block content %}
+<div class="container mx-auto p-2 max-w-3xl">
+    <h2 class="text-2xl font-bold dark:text-white mb-4">Notifications</h2>
+
+    <ul>
+        {% for notification in notifications %}
+        <li class="mb-2 p-2 justify-between items-center rounded {% if not notification.is_read %}bg-gray-100 dark:bg-gray-800{% endif %}">
+            <a href="{% url 'mark-notification-as-read' notification.pk %}">
+                {% if notification.notification_type == 'request' %}
+                <div class="flex space-x-4 items-center">
+                    <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
+                    <div class="px-2 px-1">
+                        <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
+                        <div class="mt-2">
+                            <a href="{% url 'group-accept' notification.sender.username notification.group.slug %}">
+                                <button class="ml-2 bg-blue-500 text-white px-2 text-sm py-1 rounded">Accept</button>
+                            </a>
+                            <a href="#">
+                                <button class="ml-2 bg-red-500 text-white px-2 text-sm py-1 rounded">Decline</button>   
+                            </a>
+                        </div>
+                        <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
+                    </div>
+                </div>
+        
+                {% elif notification.notification_type == 'comment' %}
+                    <div class="flex space-x-2 items-center">
+                        <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
+                        <div class="px-2 px-1">
+                            <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
+                            <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
+                        </div>
+                    </div>
+                {% elif notification.notification_type == 'like' %}
+                    <div class="flex space-x-2 items-center">
+                        <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
+                        <div class="px-2 px-1">
+                            <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
+                            <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="flex space-x-2 items-center">
+                        <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
+                        <div class="px-2 px-1">
+                            <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
+                            <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+    
