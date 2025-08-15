@@ -20,7 +20,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
+        # await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
         await self.channel_layer.group_discard(self.chat_list_group, self.channel_name)
 
 
@@ -45,19 +45,21 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
                 "type": "chat_message",
                 "message": data["message"],
                 "sender": sender.username,
-                "timestamp": message.timestamp.strftime("%H:%M, %b %d"),
+                "timestamp": message.timestamp.strftime("%H:%M %p"),
                 "unread_count": count,
             },
         )
 
         await self.channel_layer.group_send(
-            f"chat_list_{receiver.username}",  # or sender.username depending on context
+            # f"chat_list_{receiver.username}",  # or sender.username depending on context
+            "chat_list",  # or sender.username depending on context
+
             {
                 "type": "chat_list.update",  # 🔥 matches chat_list_update
                 "sender": sender.username,
                 "receiver": receiver.username,
                 "message": data["message"],
-                "timestamp": message.timestamp.strftime('%b %d, %I:%M %p'),
+                "timestamp": message.timestamp.strftime('%H:%M %p'),
                 "unread_count": count,  # must be calculated beforehand
                 "picture": picture, #if hasattr(receiver, 'profile_picture') else None,
                 "chat_count": total_count,
@@ -187,7 +189,8 @@ class ChatListConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['user']
         if self.user.is_authenticated:
-            self.group_name = f'chat_list_{self.user.username}'
+            # self.group_name = f'chat_list_{self.user.username}'
+            self.group_name = 'chat_list'
             await self.channel_layer.group_add(self.group_name, self.channel_name)
             await self.accept()
         else:

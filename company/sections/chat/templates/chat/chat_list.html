@@ -18,7 +18,7 @@
     <h2 class="text-2xl dark:text-white font-semibold mb-4">Recent Chats</h2>
 
     {% if chat_users %}
-        <ul class="">
+        <ul id="divide-y" class="">
             {% for user, details in chat_users %}
                 <li class="list-chat p-4 hover:bg-gray-100 dark:hover:bg-gray-800 flex justify-between items-center transition duration-200 ease-in" data-username="{{ user.username }}">
                     <a href="{% url 'private-chat' user.username %}" class="flex items-center space-x-3 w-full">
@@ -52,22 +52,21 @@
         const data = JSON.parse(event.data);
         console.log(data);
     
-        const list = document.querySelector('.divide-y');
+        const list = document.querySelector('#divide-y');
         if (!list) return;
     
         // Remove existing chat item for same user to avoid duplicates
-            const existingItem = list.querySelector(`[data-username="${data.sender}"]`);
+        const existingItem = list.querySelector(`[data-username="${data.sender}"]`);
         if (existingItem) {
             existingItem.remove();
         }
-    
         const newItem = `
             <li class="list-chat p-4 flex justify-between items-center" data-username="${data.sender}">
                 <a href="/chat/private/${data.sender}/" class="flex items-center space-x-3 w-full">
-                    <img src="${data.picture}" alt="Profile Pic" class="w-8 h-8 rounded-full">
+                    <img src="${data.picture}" alt="Profile Pic" class="w-10 h-10 rounded-full">
                     <div class="flex-1">
                         <div class="flex justify-between">
-                            <span class="text-lg font-medium">${data.sender}</span>
+                            <span class="text-lg dark:text-gray-300 font-medium">${data.sender}</span>
                             <span class="text-sm text-gray-500">${data.timestamp}</span>
                         </div>
                         <div class="flex justify-between">

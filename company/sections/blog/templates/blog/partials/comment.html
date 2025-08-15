@@ -1,7 +1,7 @@
 {% load static %}
 {% load date_filters %}
 
-<div class="mb-4 rounded p-2  border-b border-gray-300 dark:border-gray-700">
+<div class="comment rounded p-2 border-b border-gray-300 dark:border-gray-700">
     <div class="flex space-x-2 space-y-2">
       <img src="{{ comment.user.profile.profile_picture.url }}" alt="profile picure" class="w-10 h-10 rounded-full mr-2">
       <div class="space-y-1">
@@ -24,7 +24,6 @@
           <button class="text-sm text-gray-400 reply-btn" data-id="{{ comment.id }}" user-name="{{ comment.user.username }}">Reply</button>
         </div>
         <div class="flex items-center mb-2 space-x-2">
-          
           {% if comment.replies.all %}
             <div class="flex items-center space-x-2 cursor-pointer show-btn" data-id="{{ comment.id }}" user-name="{{ comment.user.username }}">
               <span class="text-sm text-gray-500">-- View {{ comment.replies.count }} replies</span>
@@ -36,7 +35,7 @@
         </div>
     </div>
     {% for reply in comment.replies.all %}
-      <div class="ml-9 mt-4 border-l border-gray-400 dark:border-gray-700 pl-4 hidden">
+      <div class="replies ml-9 mt-4 border-l border-gray-400 dark:border-gray-700 pl-4 hidden">
         {% include 'blog/partials/comment.html' with comment=reply %}
       </div>
     {% endfor %}
@@ -57,8 +56,8 @@
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.show-btn').forEach(button => {
         button.addEventListener('click', () => {
-          // Select only replies within this comment block
-          const replies = button.closest('.mb-4').querySelectorAll('.ml-9');
+          // Select only replies within this comment block  
+          const replies = button.closest('.comment').querySelectorAll('.replies');
           const arrow = button.querySelector('.arrow');
           // Toggle visibility
           replies.forEach(reply => reply.classList.toggle('hidden'));

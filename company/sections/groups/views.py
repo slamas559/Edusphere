@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import Group, MemberScore, Question, AnswerOption, MemberAnswer
+from .models import Group, MemberScore, Question, AnswerOption, MemberAnswer, Post, Comment
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect, JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
@@ -10,6 +10,7 @@ from django.views.decorators.http import require_POST
 from sections.notifications.views import send_notification
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
+from .forms import GroupPostForm, CommentForm
 
 # Create your views here.
 
@@ -33,7 +34,7 @@ def about_group(request, slug):
     # questions = Question.objects.filter(group=group).prefetch_related('options')
     questions = group.questions.prefetch_related('options').all()
     members = group.members.all()
-
+    posts = group.posts.all()
 
     answered_question_ids = MemberAnswer.objects.filter(
         user=request.user, question__in=questions
@@ -52,6 +53,7 @@ def about_group(request, slug):
         "questions": questions,
         'answered_question_ids': list(answered_question_ids),
         "rankings":rankings,
+        "posts": posts,
     }
     return render(request, "groups/group_details.html", context=context)
 
@@ -106,6 +108,14 @@ class GroupCreateView(LoginRequiredMixin, CreateView):
         response =  super().form_valid(form)
         
         return response
+
+class GroupUpdateView(LoginRequiredMixin, UpdateView):
+    model = Group
+    fields = ["name", "bio", "profile_picture"]  
+    template_name = "groups/group_form.html"
+
+    def get_queryset(self):
+        return Group.objects.filter(creator=self.request.user)  # Restrict updates to product owner
 
 class QuestionDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Question
@@ -184,3 +194,86 @@ def add_group_question(request, slug):
             return redirect("group-detail", group.slug)
 
     return render(request, "groups/group_question_form.html", {"group": group})
+
+@login_required
+def create_view(request, slug):
+    group = get_object_or_404(Group, slug=slug)
+    form = GroupPostForm()
+
+    if request.user not in group.members.all():
+        return redirect("not_authorized")
+    
+    if request.method == "POST":
+        form = GroupPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.author = request.user
+            post.group = group
+            post.save()
+            return redirect('group-detail', slug=slug)
+        else:
+            form = GroupPostForm()
+    return render(request, 'groups/post_form.html', { 'form': form })
+
+def post_detail(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    comments = post.group_comments.filter(post=post, parent__isnull=True).order_by('-created_at')
+    form = CommentForm()
+
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            parent_id = request.POST.get('parent_id')
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.user = request.user
+            if parent_id:
+                parent_comment = Comment.objects.get(id=parent_id)
+                comment.parent = parent_comment
+            comment.save()
+            return redirect('post-detail', slug=slug)
+
+    context = {
+        "post": post,
+        'comments': comments,
+        'form': form
+    }
+    return render(request, "groups/post_details.html", context=context)
+
+class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
+    model = Post
+    fields = ["title", "content", "image"]
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+    
+class PostDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    model = Post
+    # success_url = f"/group/details/",
+    success_url = "/group/home"
+
+    def test_func(self):
+        post = self.get_object()
+        if self.request.user == post.author:
+            return True
+        return False
+
+@require_POST
+@login_required
+def toggle_like(request, slug):
+    post = get_object_or_404(Post, slug=slug)
+    if request.user in post.likes.all():
+        post.likes.remove(request.user)
+        liked = False
+    else:
+        post.likes.add(request.user)
+        send_notification(post.author, request.user, f"{request.user} likes your post '{post.title}'", "like")
+        liked = True
+    return JsonResponse({'liked': liked, 'like_count': post.total_likes()})

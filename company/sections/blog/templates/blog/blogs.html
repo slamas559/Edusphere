@@ -3,23 +3,24 @@
 
 {% block content %}
 <div class="flex flex-col gap-6">
-<div class="flex justify-between px-2 py-4 mt-3 items-center backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50">
-    <a class="bg-gray-900 dark:bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit" href="{% url 'post-create' %}" >
-        Create Post
-    </a>
-    <form method="get" action="." class="w-1/2 md:w-1/2 mb-4">
+<div class="flex justify-between px-3 py-4 mt-3 items-center backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50">
+    <div>
+        <a class="bg-gray-900 dark:bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit" href="{% url 'post-create' %}" >
+            Create Post
+        </a>
+    </div>
+    <form method="get" action="." class="w-1/2 md:w-1/2">
         {% csrf_token %}
-        <input name="q" value="{{ request.GET.q }}" placeholder="Search for blogs" class="w-full h-14 rounded-lg mt-3 dark:bg-gray-900 border-gray-400 p-3 dark:text-gray-300 border focus:outline-none">
+        <input name="q" value="{{ request.GET.q }}" placeholder="Search for blogs" class="w-full rounded-lg dark:bg-gray-900 border-gray-400 p-3 dark:text-gray-300 border focus:outline-none">
     </form>
 </div>
 <div class="grid md:grid-cols-1 lg:grid-cols-1 sm:grid-cols-1 gap-6 overflow-y-auto align-center justify-center">
     {% if posts %}
-        <h2 class="text-2xl font-bold dark:text-white text-gray-800 mb-4">Recent Posts</h2>
     {% else %}
         <h2 class="text-2xl font-bold text-gray-800 mb-4">No Posts Available</h2>
     {% endif %}
     {% for post in posts %}
-    <div class="relative  w-2xl h-full text-white rounded-3xl overflow-hidden shadow-lg">
+    <div class="relative w-2xl h-full text-white rounded-3xl overflow-hidden shadow-lg">
         <!-- Blog Image -->
         {% if post.image %}
             <img  src="{{ post.image.url }}" alt="{{ post.title }}" 

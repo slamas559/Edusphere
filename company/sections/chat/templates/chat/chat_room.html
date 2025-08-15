@@ -24,7 +24,7 @@
                                 <div class="px-3 py-2 rounded-lg space-x-3 w-full text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
                                     <p style="font-size:14px;">{{ message.content }}
                                         <span style="font-size:10px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
-                                        {{ message.timestamp|date:"H:i,M-d" }}
+                                        {{ message.timestamp|date:"h:i" }}
                                         </span>
                                     </p>
                                 </div>
@@ -35,7 +35,7 @@
                                         <strong>{{ message.sender.username }}</strong> 
                                         <p style="font-size:14px;">{{ message.content }}
                                             <span style="font-size:10px;" class="text-gray-500 mt-1">
-                                                {{ message.timestamp|date:"H:i,M-d" }}
+                                                {{ message.timestamp|date:"H:i" }}
                                             </span>
                                         </p>
                                     </div>

@@ -1,0 +1,21 @@
+{% extends "dashboard/base.html" %}
+
+{% block content %}
+    <div class="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-6 rounded-lg shadow-md mt-10">
+        <form method="POST">
+            {% csrf_token %}
+            <fieldset class="space-y-4">
+                <legend class="text-xl font-semibold dark:text-gray-300 border-b pb-2">Delete Post</legend>
+                <h2 class="text-lg text-gray-700 dark:text-gray-400">Are you sure you want to delete the post <span class="font-bold">"{{ object.title }}"</span>?</h2>
+            </fieldset>
+            <div class="flex space-x-4 mt-6">
+                <button class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg transition" type="submit">
+                    Yes, Delete
+                </button>
+                <a href="{% url 'post-detail' object.slug %}" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded-lg transition">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+{% endblock content %}

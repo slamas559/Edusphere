@@ -1,0 +1,214 @@
+{% extends "dashboard/base.html" %}
+{% load widget_tweaks %}
+{% load static %}
+
+{% block content %}
+<div class="mx-auto py-4 rounded-lg">
+    <div class="flex justify-center align-center bg-gray-900 text-white rounded-lg mt-5 py-4">
+        <article class="flex flex-col sm:flex-row items-start gap-6"
+            style="width: 800px;">
+
+            <div class="flex-1">
+                <!-- Author & Metadata -->
+                 
+                <div class="flex justify-between px-3">
+                    <!-- Profile Picture -->
+                    <div class="items-center">
+                        <a href="{% url 'group-detail' post.group.slug %}">
+                            <div class="flex space-x-3">
+                                <img src="{{ post.group.profile_picture.url }}" alt="Profile Picture"
+                                class="w-10 h-10 rounded-lg border-gray-400">
+                                <span class="font-semibold text-sm"><p class="text-white truncate">{{ post.group.name|truncatechars:20 }}</p></span>
+                            </div>
+                        </a>
+                        <a href="{% url 'profile' post.author.profile.slug %}">
+                            <div class="flex space-x-3" style="margin-top: -25px; margin-left: 10px;">
+                                <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture"
+                                class="w-8 h-8 rounded-full border-2 border-gray-400">
+                                <div class="mt-2">
+                                    <span class="text-sm"><p class="text-white">{{ post.author.username }}</p></span>
+                                    <p class="text-sm text-gray-400">{{ post.date_posted|date:"F d, Y" }}</p>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+
+                        <!-- Edit & Delete Buttons (Only for Post Author) -->
+                        {% if post.author == user %}
+                            <div class="space-x-2">
+                                <a href="{% url 'post-update' post.slug %}" 
+                                class="px-3 py-1 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600">
+                                    Update
+                                </a>
+                                <a href="{% url 'post-delete' post.slug %}" 
+                                class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500">
+                                    Delete
+                                </a>
+                            </div>
+                        {% endif %}
+                </div>
+
+                <!-- Blog Image (Optional) -->
+                {% if post.image %}
+                <div class="mt-6">
+                    <img src="{{ post.image.url }}" 
+                        alt="Blog Image" class="rounded-lg shadow-md">
+                </div>
+                {% endif %}
+
+                <div class="px-3">
+                    <!-- Blog Title -->
+                    <h2 class="text-3xl mt-4">{{ post.title }}</h2>
+
+                    <!-- Blog Content -->
+                    <p class="mt-3 text-gray-300 leading-relaxed">{{ post.content }}</p>
+                </div>
+                <div id="like-section" class="flex items-center gap-4 mt-4 px-3">
+                    <button 
+                      id="like-btn"
+                      data-id="{{ post.id }}"
+                      class="like-btn flex items-center gap-2 {% if user in post.likes.all %} text-white-500 bg-red-500 border-red-500 {% else %} text-red-500 {% endif %}px-4 py-1 rounded-full hover:bg-red-200 transition duration-200"
+                    >
+                      {% if user in post.likes.all %}
+                        ❤️ <span>Liked</span>
+                      {% else %}
+                        ❤ <span>Like</span>
+                      {% endif %}
+                    </button>
+                    <div>
+                        <span id="like-count" class="text-gray-700 text-sm">{{ post.total_likes }}</span>
+                        <span class="text-gray-500 text-sm">likes</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </div>
+
+    <div class="max-w-2xl m-8">
+        <h2 class="text-2xl font-bold dark:text-white my-4">Comments</h2>
+        <div class="comment-list rounded-lg max-h-96 overflow-y-auto mb-8">
+            {% for comment in comments %}
+                {% include 'groups/partials/comment.html' with comment=comment %}
+            {% empty %}
+                <p class="text-gray-500">No comments yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Fixed comment form at the bottom -->
+    <div class="fixed bottom-0 left-0 p-2 right-0 bg-white dark:bg-gray-900 shadow-lg max-w-3xl mx-auto z-50 rounded-lg">
+        <form method="post" class="flex flex-row gap-2 space-x-2 max-w-3xl mx-auto">
+            {% csrf_token %}
+            <textarea id="comment_box" name="content" rows="1" placeholder="Add comment..."
+                    class="flex-1 border dark:bg-gray-800 dark:text-gray-300 rounded-lg p-2 resize-none"></textarea>
+            <input type="hidden" name="parent_id" id="parent_id">
+            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const commentBox = document.getElementById("comment_box");
+        const parentInput = document.getElementById("parent_id");
+        const form = document.querySelector("form");
+        const commentList = document.querySelector(".comment-list");
+    
+        const postId = "{{ post.id }}";
+        const userName = "{{ user.username }}";
+    
+        // Inline reply handler
+        commentList.addEventListener("click", (e) => {
+            if (e.target.classList.contains("reply-btn")) {
+                const commentId = e.target.getAttribute("data-id");
+                const userToReply = e.target.getAttribute("user-name");
+                parentInput.value = commentId;
+                commentBox.focus();
+                commentBox.placeholder = `Reply to @${userToReply}...`;
+            }
+        });
+    
+        // WebSocket setup
+        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+        const socket = new WebSocket(`${wsScheme}://${window.location.host}/ws/group/comments/${postId}/`);
+    
+        // Submit form via WebSocket
+        form.addEventListener("submit", (e) => {
+            e.preventDefault();
+            const content = commentBox.value;
+            const parent_id = parentInput.value || null;
+    
+            if (content.trim() === "") return;
+    
+            const payload = {
+                content,
+                parent_id,
+            };
+    
+            socket.send(JSON.stringify(payload));
+            commentBox.value = "";
+            commentBox.placeholder = "Add a comment...";
+            parentInput.value = "";
+        });
+    
+        // Handle incoming comments
+        socket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = data.comment_html;
+
+            if (data.parent_id) {
+                const parentEl = document.querySelector(`[data-id='${data.parent_id}']`).closest(".mb-4");
+                const replyWrapper = document.createElement("div");
+                replyWrapper.className = "ml-6 mt-4 border-l pl-4";
+                replyWrapper.appendChild(tempDiv.firstElementChild);
+                parentEl.appendChild(replyWrapper);
+            } else {
+                const newComment = document.createElement("div");
+                newComment.innerHTML = data.comment_html;
+                commentList.insertBefore(newComment, commentList.firstChild);
+            }
+
+        };
+    });
+
+    document.getElementById('like-btn')?.addEventListener('click', function() {
+        const postId = "{{ post.slug }}"; // Use Django template tag to get the post ID
+        // const postId = "{{ post.id }}";
+
+        fetch(`/group/like/${postId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likeBtn = document.getElementById('like-btn');
+            const likeCount = document.getElementById('like-count');
+            likeBtn.innerText = data.liked ? '❤️ Liked' : '❤ Like';
+            likeCount.innerText = data.like_count;
+            likeBtn.className = data.liked ? 'like-btn flex items-center gap-2 text-white-500 bg-red-500 border-red-500 px-4 py-1 rounded-full hover:bg-red-200 transition duration-200' : 'like-btn flex items-center gap-2 text-red-500 px-4 py-1 rounded-full hover:bg-red-200 transition duration-200'; 
+        });
+    });
+    
+    // Get CSRF token from cookie
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const c = cookie.trim();
+                if (c.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+        
+    
+{% endblock %}

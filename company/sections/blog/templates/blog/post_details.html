@@ -3,17 +3,19 @@
 {% load static %}
 
 {% block content %}
-<div class="max-w-full mx-auto py-4 px-2 rounded-lg ">
-    <div class="bg-gray-900 text-white rounded-lg py-10 px-5">
-        <article class="flex flex-col sm:flex-row items-start gap-6">
+<div class="mx-auto py-4 rounded-lg">
+    <div class="flex justify-center items-center bg-gray-900 text-white rounded-lg mt-5 py-4">
+        <article class="flex w-300 flex-col sm:flex-row items-start gap-6"
+            style="max-width: 800px"    
+        >
 
             <div class="flex-1">
                 <!-- Author & Metadata -->
                  
-                <div class="flex justify-between">
+                <div class="flex justify-between px-3">
                     <!-- Profile Picture -->
                      <div class="flex space-x-3 items-center">
-                    <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture"
+                        <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture"
                         class="w-10 h-10 rounded-full border-2 border-gray-400">
                         <div>
                             <a href="{% url 'profile' post.author.profile.slug %}" 
@@ -43,16 +45,16 @@
                 {% if post.image %}
                 <div class="mt-6">
                     <img src="{{ post.image.url }}" 
-                        alt="Blog Image" class="w-full rounded-lg shadow-md">
+                        alt="Blog Image" class="w-full shadow-md">
                 </div>
                 {% endif %}
-
-                <!-- Blog Title -->
-                <h2 class="text-3xl font-bold mt-4">{{ post.title }}</h2>
-
-                <!-- Blog Content -->
-                <p class="mt-3 text-gray-300 leading-relaxed">{{ post.content }}</p>
-                <div id="like-section" class="flex items-center gap-4 mt-4">
+                 <div class="px-3">
+                    <!-- Blog Title -->
+                    <h2 class="text-3xl  mt-4">{{ post.title }}</h2>
+                    <!-- Blog Content -->
+                    <p class="mt-3 text-gray-300 leading-relaxed">{{ post.content }}</p>
+                 </div>
+                <div id="like-section" class="flex items-center gap-4 mt-4 px-3">
                     <button 
                       id="like-btn"
                       data-id="{{ post.id }}"
@@ -71,13 +73,11 @@
                 </div>
             </div>
         </article>
-        
-          
     </div>
 
-    <div class="mb-8 max-w-3xl">
+    <div class="max-w-2xl m-8">
         <h2 class="text-2xl font-bold dark:text-white my-4">Comments</h2>
-        <div class="comment-list rounded-lg p-3 max-h-96 overflow-y-auto pb-8">
+        <div class="comment-list rounded-lg max-h-96 overflow-y-auto mb-8">
             {% for comment in comments %}
                 {% include 'blog/partials/comment.html' with comment=comment %}
             {% empty %}
@@ -87,10 +87,10 @@
     </div>
 
     <!-- Fixed comment form at the bottom -->
-    <div class="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-lg max-w-3xl mx-auto px-5 py-10 z-50">
+    <div class="fixed p-2 bottom-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-lg max-w-3xl mx-auto z-50 rounded-lg">
         <form method="post" class="flex flex-row gap-2 space-x-2 max-w-3xl mx-auto">
             {% csrf_token %}
-            <textarea id="comment_box" name="content" rows="2" placeholder="Add comment..."
+            <textarea id="comment_box" name="content" rows="1" placeholder="Add comment..."
                     class="flex-1 border dark:bg-gray-800 dark:text-gray-300 rounded-lg p-2 resize-none"></textarea>
             <input type="hidden" name="parent_id" id="parent_id">
             <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post</button>

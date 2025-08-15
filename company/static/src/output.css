@@ -1735,6 +1735,9 @@
   .w-84 {
     width: calc(var(--spacing) * 84);
   }
+  .w-300 {
+    width: calc(var(--spacing) * 300);
+  }
   .w-\[calc\(100\%-1rem\)\] {
     width: calc(100% - 1rem);
   }

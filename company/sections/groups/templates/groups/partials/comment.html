@@ -1,0 +1,72 @@
+{% load static %}
+{% load date_filters %}
+
+<div class="comment rounded p-2 border-b border-gray-300 dark:border-gray-700">
+    <div class="flex space-x-2 space-y-2">
+      <img src="{{ comment.user.profile.profile_picture.url }}" alt="profile picure" class="w-10 h-10 rounded-full mr-2">
+      <div class="space-y-1">
+        <div class="flex items-center">
+          <div class="font-semibold dark:text-white text-gray-700">{{ comment.user.username }}</div>
+        </div>
+
+        <pre><p style="font-family:tahoma;" class="text-gray-500 dark:text-gray-300 arial">{{ comment.content }}</p></pre>
+        <div class="flex space-x-2 items-center">
+          <div>
+            <p class="text-xs dark:text-gray-500 text-gray-500" style="font-size:10px;">
+              {% if comment.created_at|seconds > 604800 %}
+                {{ comment.created_at|date:"m-d-y" }}
+                          
+              {% else %}
+                {{ comment.created_at|timesince }} ago
+              {% endif %}
+            </p>
+            </div>
+          <button class="text-sm text-gray-400 reply-btn" data-id="{{ comment.id }}" user-name="{{ comment.user.username }}">Reply</button>
+        </div>
+        <div class="flex items-center mb-2 space-x-2">
+          {% if comment.group_replies.all %}
+            <div class="flex items-center space-x-2 cursor-pointer show-btn" data-id="{{ comment.id }}" user-name="{{ comment.user.username }}">
+              <span class="text-sm text-gray-500">-- View {{ comment.replies.count }} replies</span>
+              <img src="{% static '/icons/arrow-down.png' %}" alt="My image" 
+                class="arrow text-sm text-blue-600 w-4 h-4 transform-transition duration-300">
+              </div>
+          {% endif %}
+        </div>
+        </div>
+    </div>
+    {% for reply in comment.group_replies.all %}
+      <div class="replies ml-9 mt-4 border-l border-gray-400 dark:border-gray-700 pl-4 hidden">
+        {% include 'groups/partials/comment.html' with comment=reply %}
+      </div>
+    {% endfor %}
+</div>
+<!-- Add this script to handle the reply button click event -->
+<script>
+    document.querySelectorAll('.reply-btn').forEach(button => {
+      button.addEventListener('click', () => {
+        const parentId = button.getAttribute('data-id');
+        const userName = button.getAttribute('user-name');
+        document.getElementById('parent_id').value = parentId;
+        document.getElementById('comment_box').placeholder = `Reply to @${userName}...`;
+        document.getElementById('comment_box').focus();
+        //window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.show-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          // Select only replies within this comment block  
+          const replies = button.closest('.comment').querySelectorAll('.replies');
+          const arrow = button.querySelector('.arrow');
+          // Toggle visibility
+          replies.forEach(reply => reply.classList.toggle('hidden'));
+  
+          // Toggle button text
+          arrow.classList.toggle('rotate-180')
+          arrow.classList.toggle('transition-transform'); // Add transition for smooth rotation
+          arrow.classList.toggle('duration-300'); // Duration for the rotation
+        });
+      });
+    });     
+</script>

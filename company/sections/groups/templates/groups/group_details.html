@@ -22,12 +22,17 @@
             <a href="{% url 'group-join' group.slug %}" class="text-blue-500 hover:underline">Join Group</a>
         {% endif %}
             <a href="{% url 'chat-room' group.slug %}" class="text-blue-500 hover:underline">Visit Chat</a>
-     </div>
+        </div>
 
-        <div class="mt-5">
+        <div class="mt-5 flex-1 space-x-4">
             {% if request.user in group.admin.all %}
                 <a href="{% url 'group-add-question' group.slug %}" class="text-blue-500 mt-4 hover:underline">Make Questions</a>
             {% endif %}
+            {% if request.user in group.members.all %}
+                <a href={% url 'group-post' group.slug %} class="text-blue-500 hover:underline">Create Post</a>
+            {% endif %}
+        </div>
+        
         </div>
     </div>
   </div>
@@ -35,7 +40,8 @@
   <!-- Navigation Tabs -->
   <div class="mt-6 border-b border-gray-200">
     <nav class="-mb-px flex space-x-8 justify-between p-6" aria-label="Tabs">
-      <p id="activ" class="text-blue-600 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 border-blue-600 whitespace-nowrap pb-4 px-1 border-b-2 font-medium cursor-pointer text-sm">Activities</p>
+      <p id="post" class="text-blue-600 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 border-blue-600 whitespace-nowrap pb-4 px-1 border-b-2 font-medium cursor-pointer text-sm">Posts</p>
+      <p id="activ" class="text-blue-600 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 whitespace-nowrap pb-4 px-1 font-medium cursor-pointer text-sm">Activities</p>
       <p id="membs" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 whitespace-nowrap pb-4 px-1 font-medium cursor-pointer text-sm">Members</p>
       <p id="rank" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 whitespace-nowrap pb-4 px-1 font-medium cursor-pointer text-sm">Rankings</p>
       <p id="sett" class="text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 whitespace-nowrap pb-4 px-1 font-medium cursor-pointer text-sm">Settings</p>
@@ -43,9 +49,13 @@
   </div>
 
   <!-- Tab Content -->
-    <div class="mt-6 space-y-10 flex flex-row items-center justify-center shadow-md rounded-lg p-6">
+    <div class="mt-6 space-y-10 flex flex-row items-center justify-center shadow-md rounded-lg ">
     <!-- Chat Section -->
-        <section id="activity" class="w-full">  
+        <section id="posts" class="mt-3 w-full">
+            {% include 'groups/partials/post.html' with posts=posts%}
+        </section>
+
+        <section id="activity" class="mt-3 w-full hidden">  
             <div class="text-center mb-7">
                 <h2 class="text-xl font-bold text-gray-800 dark:text-gray-300 mb-4">Group Challenge 🎯</h2>
                 <p class="text-gray-600 mb-4 dark:text-gray-400">Answer the questions below to earn Eduscoin!</p>
@@ -57,7 +67,7 @@
         </section>
 
         <!-- Members Section -->
-        <section id="members" class="mt-6 w-full hidden">
+        <section id="members" class="mt-3 w-full hidden p-6">
             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-4">Group Members</h2>
             <ul class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {% for member in group.members.all %}
@@ -67,31 +77,53 @@
         </section>
 
         <!-- Rankings Section -->
-        <section id="rankings" class="mt-6 w-full hidden">
+        <section id="rankings" class="mt-3 w-full hidden p-6">
             <h2 class="text-2xl font-bold mb-5 text-center dark:text-gray-300">🏆 {{ group.name }} Rankings</h2>
             {% include 'groups/partials/ranking.html' with rankings=rankings %}
         </section>
 
         <!-- Settings Section -->
-        <section id="settings" class="mt-6 w-full hidden">
+        <section id="settings" class="mt-3 w-full hidden p-6">
             <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-300 mb-4">Group Settings</h2>
             {% include 'groups/partials/settings.html'  %}
         </section>
     </div>
 </div>
 <script>
+    const postSection = document.getElementById('posts');
     const activitySection = document.getElementById('activity');
     const membersSection = document.getElementById('members');
     const settingsSection = document.getElementById('settings');
     const rankingsSection = document.getElementById('rankings');
 
+    document.getElementById('post').addEventListener('click', function() {
+        postSection.classList.remove('hidden');
+        activitySection.classList.add('hidden');
+        membersSection.classList.add('hidden');
+        settingsSection.classList.add('hidden');
+        rankingsSection.classList.add('hidden');
+        this.classList.remove('text-gray-500');
+        this.classList.add('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('activ').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('activ').classList.add('text-gray-500');
+        document.getElementById('membs').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('membs').classList.add('text-gray-500');
+        document.getElementById('sett').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('sett').classList.add('text-gray-500');
+        document.getElementById('rank').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('rank').classList.add('text-gray-500');
+    });
+
     document.getElementById('activ').addEventListener('click', function() {
+        postSection.classList.add('hidden');
         activitySection.classList.remove('hidden');
         membersSection.classList.add('hidden');
         settingsSection.classList.add('hidden');
         rankingsSection.classList.add('hidden');
         this.classList.remove('text-gray-500');
         this.classList.add('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.add('text-gray-500');
         document.getElementById('membs').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
         document.getElementById('membs').classList.add('text-gray-500');
         document.getElementById('sett').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
@@ -101,12 +133,15 @@
     });
 
     document.getElementById('membs').addEventListener('click', function() {
+        postSection.classList.add('hidden');
         activitySection.classList.add('hidden');
         membersSection.classList.remove('hidden');
         settingsSection.classList.add('hidden');
         rankingsSection.classList.add('hidden');
         this.classList.remove('text-gray-500');
         this.classList.add('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.add('text-gray-500');
         document.getElementById('activ').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
         document.getElementById('activ').classList.add('text-gray-500');
         document.getElementById('sett').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
@@ -116,12 +151,15 @@
     });
 
     document.getElementById('sett').addEventListener('click', function() {
+        postSection.classList.add('hidden');
         activitySection.classList.add('hidden');
         membersSection.classList.add('hidden');
         settingsSection.classList.remove('hidden');
         rankingsSection.classList.add('hidden');
         this.classList.remove('text-gray-500');
         this.classList.add('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.add('text-gray-500');
         document.getElementById('activ').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
         document.getElementById('activ').classList.add('text-gray-500');
         document.getElementById('membs').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
@@ -131,12 +169,15 @@
     });
 
     document.getElementById('rank').addEventListener('click', function() {
+        postSection.classList.add('hidden');
         activitySection.classList.add('hidden');
         membersSection.classList.add('hidden');
         settingsSection.classList.add('hidden');
         rankingsSection.classList.remove('hidden');
         this.classList.remove('text-gray-500');
         this.classList.add('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
+        document.getElementById('post').classList.add('text-gray-500');
         document.getElementById('activ').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');
         document.getElementById('activ').classList.add('text-gray-500');
         document.getElementById('membs').classList.remove('text-blue-600', 'border-blue-600', 'border-b-2');

@@ -15,3 +15,7 @@
   display: flex;
   justify-content: ;
 }
+
+.w-70 {
+  width: 70%;
+}

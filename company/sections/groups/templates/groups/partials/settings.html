@@ -1,7 +1,7 @@
 <div class="p-4 rounded-lg shadow">
     {% if request.user == group.creator %}
     <p class="text-sm text-gray-700 dark:text-gray-300 mb-2">You are the group creator. You can update the group name, picture, or delete the group.</p>
-    <a href="#" class="text-blue-600 hover:underline">Edit Group</a> |
+    <a href="{% url 'group-update' group.pk %}" class="text-blue-600 hover:underline">Edit Group</a> |
     <a href="#" class="text-red-500 hover:underline">Delete Group</a>
     {% else %}
     <p class="text-sm text-gray-600 dark:text-gray-300">Only the group creator can modify group settings.</p>

@@ -32,8 +32,8 @@ def register(request):
 @login_required
 def profile(request, slug):
     user = get_object_or_404(Profile, slug=slug)
-    posts = Post.objects.filter(author=user.user).order_by("-date_posted")
-    products = Product.objects.filter(seller=user.user)
+    posts = Post.objects.filter(author=user.user).order_by("-date_posted")[:4]
+    products = Product.objects.filter(seller=user.user)[:3]
     context = {
         "owner":user,
         "posts":posts,

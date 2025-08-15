@@ -1,0 +1,118 @@
+<div class="flex flex-col gap-6 mt-3">
+    <div class="flex flex-col gap-6 overflow-y-auto items-center justify-center">
+        {% if posts %}
+        {% else %}
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">No Posts Available</h2>
+        {% endif %}
+        {% for post in posts %}
+        <div class="relative w-full sm:flex-row text-white rounded-3xl overflow-hidden shadow-lg" 
+            style="min-width: 400px; max-width: 700px;">
+            <!-- Blog Image -->
+            {% if post.image %}
+                <img  src="{{ post.image.url }}" alt="{{ post.title }}" 
+                    class="w-full object-cover h-84 transition-transform duration-300 hover:scale-105">
+            {% else %}
+                <div class="w-full h-34 flex items-center justify-center">
+                </div>
+            {% endif %}
+
+            <!-- Profile Overlay (Top-Left) -->
+            <div class="absolute top-4 left-4 items-center backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 p-2 rounded-full"
+                style="background-color:rgba(0,0,0,0.2);"> 
+                <!-- User Profile Picture -->
+                <a href="{% url 'group-detail' post.group.slug %}">
+                    <div class="flex space-x-2">
+                        <img src="{{ post.group.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-lg border-white">
+                        <span class="font-semibold text-sm"><p class="text-white truncate">{{ post.group.name|truncatechars:20 }}</p></span>
+                    </div>
+                </a>
+                <a href="{% url 'profile' post.author.profile.slug %}">
+                    <div class="flex space-x-2" style="margin-top: -25px; margin-left: 10px;">
+                        <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture" class="w-8 h-8 rounded-full border-2 border-white">
+                        <span class="mt-2 text-sm"><p class="text-white">{{ post.author.username }}</p></span>
+                    </div>
+                </a>
+                <!-- Username -->
+            </div>
+
+            <!-- Blog Content -->
+            <div class="p-6 ">
+                <h2 class="text-gray-900 dark:text-white text-2xl font-bold mb-2">{{ post.title }}</h2>
+                <p class="text-gray-500 dark:text-gray-400 text-sm">Published {{ post.date_posted|date:"M d, Y H:i"}}</p>
+
+                <p class="mt-3 text-gray-700 dark:text-gray-300">
+                    {{ post.content|truncatechars:100 }} <!-- Shortens text preview -->
+                </p>
+
+                <div class="flex items-center justify-between mt-4">
+                    <a href="{% url 'post-detail' post.slug %}" 
+                    class="mt-4 text-sm text-blue-500 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200 hover:scale-105">
+                        Read More → 
+                    </a>
+                    <div id="like-section" class="flex items-center gap-4 mt-4">
+                        <span class="text-sm text-gray-500 dark:text-gray-400">{{ post.group_comments.count }} 💬</span>
+                        <button 
+                        id="like-btn"
+                        data-id="{{ post.id }}"
+                        post-slug="{{ post.slug }}"
+                        class="like-btn flex items-center hover:scale-105 dark:text-gray-400 gap-2 {% if user in post.likes.all %}dark:text-white text-white-500 bg-red-500 border-red-500 {% else %} text-red-500 {% endif %} px-3 py-1 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200"
+                        >
+                        {% if user in post.likes.all %}
+                            ❤️ <span>Liked</span>
+                        {% else %}
+                            ❤ <span>Like</span>
+                        {% endif %}
+                        </button>
+                        <div>
+                            <span id="like-count" class="text-gray-600 dark:text-gray-400 text-sm count">{{ post.total_likes }}</span>
+                            <span class="text-gray-500 dark:text-gray-400 text-sm">likes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.like-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const postSlug = button.getAttribute('post-slug');
+                const id = button.getAttribute('data-id'); 
+                
+                fetch(`/group/like/${postSlug}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    const likeCount = button.closest('.p-6').querySelectorAll('.count');
+                    button.innerText = data.liked ? '❤️ Liked' : '❤ Like';
+                    likeCount.forEach(count => count.innerText = data.like_count);
+                    button.className = data.liked
+                        ? 'like-btn flex items-center gap-2 text-white-500 bg-red-500 px-3 py-1 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200'
+                        : 'like-btn flex items-center gap-2 text-red-500 px-3 py-1 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200';
+                });    
+            })
+        })
+    });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                const c = cookie.trim();
+                if (c.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
