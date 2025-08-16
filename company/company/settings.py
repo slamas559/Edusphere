@@ -30,7 +30,10 @@ SECRET_KEY = 'django-insecure-_2)va(^c$!2_r)qjkuw0m!4k$o%q^8^%@6%w!cz17)^*x#l2fp
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['.onrender.com']
+ALLOWED_HOSTS = ["edusphere-5dmb.onrender.com", "localhost", "127.0.0.1"]
+
+CSRF_TRUSTED_ORIGINS = ["https://edusphere-5dmb.onrender.com"]
+
 
 
 
@@ -87,6 +90,8 @@ CHANNEL_LAYERS = {
         },
     },
 }
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # COMPRESS_ROOT = BASE_DIR / 'static'
 
