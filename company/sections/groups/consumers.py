@@ -4,7 +4,6 @@ from django.utils import timezone
 from asgiref.sync import sync_to_async
 import json
 
-from .models import Comment, Post
 
 class CommentConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -48,10 +47,12 @@ class CommentConsumer(AsyncWebsocketConsumer):
 
     @sync_to_async
     def get_post(self, post_id):
+        from .models import Post   # ✅ lazy import
         return Post.objects.get(id=post_id)
 
     @sync_to_async
     def create_comment(self, user, post, content, parent_id):
+        from .models import Comment   # ✅ lazy import
         return Comment.objects.create(
             user=user,
             post=post,
