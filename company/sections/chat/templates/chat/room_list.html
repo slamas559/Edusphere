@@ -48,7 +48,9 @@
     {% endif %}
 </div>
 <script>
-    const groupListSocket = new WebSocket("ws://" + window.location.host + "/ws/group-list/");
+    {% comment %} const groupListSocket = new WebSocket("ws://" + window.location.host + "/ws/group-list/"); {% endcomment %}
+    const groupListSocket = new WebSocket("wss://" + window.location.host + "/ws/group-list/");
+
 
     groupListSocket.onmessage = function (event) {
         const data = JSON.parse(event.data);

@@ -45,7 +45,8 @@
 </div>
 <script>
     const chatListSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat-list/'
+        //'ws://' + window.location.host + '/ws/chat-list/'
+        'wss://' + window.location.host + '/ws/chat-list/'
     );
 
     chatListSocket.onmessage = function (event) {
