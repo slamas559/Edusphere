@@ -29,7 +29,6 @@ urlpatterns = [
     path('chat/', include('sections.chat.urls')),
     path('group/', include('sections.groups.urls')),
     path('market/', include('sections.market.urls')),
-    path('audio/', include('sections.audio.urls')),
     path('archive/', include('sections.archive.urls')),
     path('inbox/', include('sections.notifications.urls')),
     path("register/", views.register, name="register"),

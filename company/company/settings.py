@@ -52,7 +52,6 @@ INSTALLED_APPS = [
     'sections.dashboard.apps.DashboardConfig',
     'sections.chat.apps.ChatConfig',
     'sections.market.apps.MarketConfig',
-    'sections.audio.apps.AudioConfig',
     'sections.groups.apps.GroupsConfig',
     'sections.archive.apps.ArchiveConfig',
     'sections.notifications.apps.NotificationsConfig',

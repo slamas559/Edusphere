@@ -15,7 +15,6 @@ from django.core.asgi import get_asgi_application
 
 # Import your websocket routing patterns
 from sections.chat.routing import websocket_urlpatterns as chat_urlpatterns
-from sections.audio.routing import websocket_urlpatterns as audio_urlpatterns
 from sections.notifications.routing import websocket_urlpatterns as notify_urlpatterns
 from sections.blog.routing import websocket_urlpatterns as blog_urlpatterns
 from sections.groups.routing import websocket_urlpatterns as groups_urlpatterns
@@ -25,7 +24,7 @@ os.environ.setdefault("DJANGO_SETTINGS_MODULE", "company.settings")
 django.setup()
 
 # Combine all websocket routes
-combined_websocket_urlpatterns = chat_urlpatterns + audio_urlpatterns + notify_urlpatterns + blog_urlpatterns + groups_urlpatterns
+combined_websocket_urlpatterns = chat_urlpatterns + notify_urlpatterns + blog_urlpatterns + groups_urlpatterns
 
 # ASGI application
 application = ProtocolTypeRouter({
