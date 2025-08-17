@@ -207,14 +207,14 @@ CLOUDINARY_STORAGE = {
 }
 
 # DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
-STATICFILES_STORAGE = 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 STORAGES = {
   'default': {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
   },
   'staticfiles': {
-    'BACKEND': 'cloudinary_storage.storage.StaticHashedCloudinaryStorage'  # this is the storage for static files
+    'BACKEND': 'django.core.files.storage.FileSystemStorage'  # this is the storage for static files
   },
 }
 
