@@ -4,10 +4,13 @@ from django.dispatch import receiver
 from .models import Profile
 
 @receiver(post_save, sender=User)
-def create_profile(sender, instance, created, **kwargs):
+def create_or_update_profile(sender, instance, created, **kwargs):
     if created:
+        # Create a new profile only when the user is first created
         Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_profile(sender, instance, **kwargs):
-    instance.profile.save()
+    else:
+        # Only update the profile if user fields are updated, not on login
+        # Use update_fields to avoid unnecessary saves
+        update_fields = kwargs.get('update_fields', None)
+        if update_fields and not {'last_login'}.issuperset(update_fields):
+            instance.profile.save()
