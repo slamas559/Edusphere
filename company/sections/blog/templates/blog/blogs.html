@@ -3,15 +3,15 @@
 
 {% block content %}
 <div class="flex flex-col gap-6">
-<div class="flex justify-between px-3 py-4 mt-3 items-center backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50">
+<div class="bg-green-700 flex text-sm justify-between px-3 py-3 items-center backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50">
     <div>
-        <a class="bg-gray-900 dark:bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit" href="{% url 'post-create' %}" >
+        <a class="bg-gray-700 text-white py-2 px-3 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit" href="{% url 'post-create' %}" >
             Create Post
         </a>
     </div>
     <form method="get" action="." class="w-1/2 md:w-1/2">
         {% csrf_token %}
-        <input name="q" value="{{ request.GET.q }}" placeholder="Search for blogs" class="w-full rounded-lg dark:bg-gray-900 border-gray-400 p-3 dark:text-gray-300 border focus:outline-none">
+        <input name="q" value="{{ request.GET.q }}" placeholder="Search for blogs" class="w-full rounded-lg dark:bg-gray-900 border-gray-400 p-2 dark:text-gray-300 border focus:outline-none">
     </form>
 </div>
 <div class="grid md:grid-cols-1 lg:grid-cols-1 sm:grid-cols-1 gap-6 overflow-y-auto align-center justify-center">
@@ -20,6 +20,7 @@
         <h2 class="text-2xl font-bold text-gray-800 mb-4">No Posts Available</h2>
     {% endif %}
     {% for post in posts %}
+    <a href="{% url 'blog-detail' post.slug %}"> 
     <div class="relative w-2xl h-full text-white rounded-3xl overflow-hidden shadow-lg">
         <!-- Blog Image -->
         {% if post.image %}
@@ -51,11 +52,7 @@
                 {{ post.content|truncatechars:100 }} <!-- Shortens text preview -->
             </p>
 
-            <div class="flex items-center justify-between mt-4">
-                <a href="{% url 'blog-detail' post.slug %}" 
-                class="mt-4 text-sm text-blue-500 px-2 py-2 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200 hover:scale-105">
-                    Read More → 
-                </a>
+            <div class="flex items-center justify-between mt-4">                
                 <div id="like-section" class="flex items-center gap-4 mt-4">
                     <span class="text-sm text-gray-500 dark:text-gray-400">{{ post.comments.count }} 💬</span>
                     <button 
@@ -78,6 +75,7 @@
             </div>
         </div>
     </div>
+    </a>
     {% endfor %}
 </div>
 </div>

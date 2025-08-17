@@ -15,7 +15,7 @@ class Group(models.Model):
     admin = models.ManyToManyField(User, related_name='admin', blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(default="default.jpg", upload_to="group_pics", blank=True, null=True)
+    profile_picture = models.ImageField(default="default.jpg", upload_to="group_pics/", blank=True, null=True)
     slug = models.SlugField(default="", null=False, unique=True)
 
     def save(self, *args, **kwargs):
@@ -47,8 +47,8 @@ class Post(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="posts")
     content = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
-    author =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="authors")
-    image = models.ImageField(upload_to="group_images", blank=True, null=True)
+    author =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="authors_group")
+    image = models.ImageField(upload_to="group_images/", blank=True, null=True)
     slug = models.SlugField(default="", null=False, unique=True)
     likes = models.ManyToManyField(User, related_name='liked_group_post', blank=True)
 

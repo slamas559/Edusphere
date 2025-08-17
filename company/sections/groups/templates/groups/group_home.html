@@ -2,13 +2,16 @@
 {% comment %} {% load widget_tweaks %} {% endcomment %}
 
 {% block content %}
-<div class="flex items-center justify-end p-2">
-    <a class="bg-gray-800 text-white py-4 px-3 rounded-lg mr-3 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit" href="{% url 'group-create' %}" >
-        Create Group ➕
-    </a>
-    <form method="get">
+<div class="flex flex-col gap-6 text-sm">
+<div class="flex text-sm justify-between px-3 py-3 items-center backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-green-700 bg-opacity-50">
+    <div>
+        <a class="bg-gray-800 text-white py-2 px-3 rounded-lg hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50" type="submit" href="{% url 'group-create' %}" >
+            Create Group ➕
+        </a>
+    </div>
+    <form method="get" class="w-1/2 md:w-1/2">
         {% csrf_token %}
-        <input name="q" value="{{ request.GET.q }}" placeholder="Search for groups" class="w-full h-14 rounded-lg dark:bg-gray-900 border-gray-400 p-3 dark:text-gray-300 border focus:outline-none">
+        <input name="q" value="{{ request.GET.q }}" placeholder="Search for groups" class="w-full h-14 rounded-lg dark:bg-gray-900 border-gray-400 p-2 dark:text-gray-300 border focus:outline-none">
     </form> 
 </div>
 </div>
@@ -32,4 +35,5 @@
             {% endfor %}
         </ul>
     </div>
+</div>
 {% endblock %}

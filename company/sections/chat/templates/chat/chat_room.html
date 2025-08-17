@@ -3,8 +3,8 @@
 {% load static %}
 
 {% block content %}
-<div class="w-full mx-auto p-3 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg">
-    <div class="flex items-center border-b pb-2 mb-4">
+<div class="w-full h-full mx-auto p-2 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg flex flex-col overflow-hidden">
+    <div class="flex items-center border-b py-2">
         <img class="w-8 h-8 rounded-full" src="{{ room.profile_picture.url }}">
         <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ room.name }}</h2>
     </div>
@@ -23,7 +23,7 @@
                             {% if message.sender == request.user %}
                                 <div class="px-3 py-2 rounded-lg space-x-3 w-full text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
                                     <p style="font-size:14px;">{{ message.content }}
-                                        <span style="font-size:10px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
+                                        <span style="font-size:8px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
                                         {{ message.timestamp|date:"h:i" }}
                                         </span>
                                     </p>

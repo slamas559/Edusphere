@@ -17,7 +17,7 @@ class Profile(models.Model):
     school = models.CharField(max_length=250, default="")
     education_level = models.CharField(choices=LEVELS, default="", max_length=250)
     bio = models.TextField(blank=True, null=True)
-    profile_picture = models.ImageField(default="default.jpg", upload_to="profile_pics", blank=True, null=True)
+    profile_picture = models.ImageField(default="default.jpg", upload_to="profile_pics/", blank=True, null=True)
     slug = models.SlugField(default="", null=False, unique=True)
 
 

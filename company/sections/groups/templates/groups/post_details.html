@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="mx-auto py-4 rounded-lg">
-    <div class="flex justify-center align-center bg-gray-900 text-white rounded-lg mt-5 py-4">
+    <div class="flex justify-center align-center bg-gray-900 text-white rounded-lg mt-5">
         <article class="flex flex-col sm:flex-row items-start gap-6"
             style="width: 800px;">
 
@@ -52,7 +52,7 @@
                 {% if post.image %}
                 <div class="mt-6">
                     <img src="{{ post.image.url }}" 
-                        alt="Blog Image" class="rounded-lg shadow-md">
+                        alt="Blog Image" class="w-full shadow-md">
                 </div>
                 {% endif %}
 

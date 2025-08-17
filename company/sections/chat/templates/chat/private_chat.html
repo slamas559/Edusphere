@@ -2,10 +2,10 @@
 {% load static %}
 
 {% block content %}
-<div class="w-full mx-auto p-2 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg" style="height:80vh;">
+<div class="w-full h-full mx-auto p-2 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg flex flex-col overflow-hidden">
     <!-- Chat Header -->
      <a href="{% url 'profile' receiver.profile.slug %}">
-    <div class="flex items-center border-b pb-2 mb-4">
+    <div class="flex items-center border-b py-2">
         <img class="w-8 h-8 rounded-full" src="{{ receiver.profile.profile_picture.url }}">
         <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ receiver.username }}</h2>
     </div>
@@ -18,9 +18,9 @@
         {% endif %}
         {% for message in messages %}
             <div class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
-                <div style="max-width:60%" class="inline-block px-3 py-1 rounded-lg text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                <div style="max-width:60%" class="inline-block px-2 py-1 rounded-lg text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
                         <p style="font-size:14px;">{{ message.content }}
-                            <span style="font-size:10px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
+                            <span style="font-size:8px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
                             {{ message.timestamp|date:"h:i" }}
                             </span>
                         </p>

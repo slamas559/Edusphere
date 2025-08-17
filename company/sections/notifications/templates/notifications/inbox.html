@@ -1,11 +1,11 @@
 {% extends "dashboard/base.html"%}
 {% block content %}
-<div class="container mx-auto p-2 max-w-3xl">
-    <h2 class="text-2xl font-bold dark:text-white mb-4">Notifications</h2>
+<div class="container mx-auto max-w-3xl">
+    <h2 class="text-2xl p-3 font-bold dark:text-white">Notifications</h2>
 
     <ul>
         {% for notification in notifications %}
-        <li class="mb-2 p-2 justify-between items-center rounded {% if not notification.is_read %}bg-gray-100 dark:bg-gray-800{% endif %}">
+        <li class="mb-1 p-2 justify-between items-center {% if not notification.is_read %}bg-gray-100 dark:bg-gray-800{% endif %}">
             <a href="{% url 'mark-notification-as-read' notification.pk %}">
                 {% if notification.notification_type == 'request' %}
                 <div class="flex space-x-4 items-center">
