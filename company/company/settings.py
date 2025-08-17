@@ -46,7 +46,6 @@ INSTALLED_APPS = [
     'channels',
     'daphne',
     'jazzmin',
-    'cloudinary',
     'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -54,6 +53,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary',
     'compressor',
     "widget_tweaks",
     'sections.blog.apps.BlogConfig',
@@ -180,7 +180,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -214,7 +214,7 @@ STORAGES = {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
   },
   'staticfiles': {
-    'BACKEND': 'django.core.files.storage.FileSystemStorage'  # this is the storage for static files
+    'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'  # this is the storage for static files
   },
 }
 
