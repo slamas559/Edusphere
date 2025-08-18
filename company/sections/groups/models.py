@@ -19,18 +19,10 @@ class Group(models.Model):
     slug = models.SlugField(default="", null=False, unique=True)
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
         if not self.id:
             self.id = random.randint(100000000000, 999999999999)  # 12-digit random number
         # if not self.slug:
         self.slug = f"{slugify(self.name)}-{self.id}"  # Example: 123456789012-my-title
-
-        img = Image.open(self.profile_picture.path)
-        if img.height > 300 or img.width > 300:
-            output_size = (300, 300)
-            img.thumbnail(output_size)
-            img.save(self.profile_picture.path)
-
         self.admin.add(self.creator)
         self.members.add(self.creator)
         return super().save(*args, **kwargs)

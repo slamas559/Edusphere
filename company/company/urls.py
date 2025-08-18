@@ -23,6 +23,7 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    path("__reload__/", include("django_browser_reload.urls")),
     path('admin/', admin.site.urls),
     path('', include('sections.dashboard.urls')),
     path('post/', include('sections.blog.urls')),

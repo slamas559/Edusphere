@@ -3,180 +3,186 @@
 {% load static %}
 
 {% block content %}
-<div class="mx-auto py-4 rounded-lg">
-    <div class="flex justify-center align-center bg-gray-900 text-white rounded-lg mt-5">
-        <article class="flex flex-col sm:flex-row items-start gap-6"
-            style="width: 800px;">
-
-            <div class="flex-1">
-                <!-- Author & Metadata -->
-                 
-                <div class="flex justify-between px-3">
-                    <!-- Profile Picture -->
-                    <div class="items-center">
-                        <a href="{% url 'group-detail' post.group.slug %}">
-                            <div class="flex space-x-3">
-                                <img src="{{ post.group.profile_picture.url }}" alt="Profile Picture"
-                                class="w-10 h-10 rounded-lg border-gray-400">
-                                <span class="font-semibold text-sm"><p class="text-white truncate">{{ post.group.name|truncatechars:20 }}</p></span>
-                            </div>
-                        </a>
-                        <a href="{% url 'profile' post.author.profile.slug %}">
-                            <div class="flex space-x-3" style="margin-top: -25px; margin-left: 10px;">
-                                <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture"
-                                class="w-8 h-8 rounded-full border-2 border-gray-400">
-                                <div class="mt-2">
-                                    <span class="text-sm"><p class="text-white">{{ post.author.username }}</p></span>
-                                    <p class="text-sm text-gray-400">{{ post.date_posted|date:"F d, Y" }}</p>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-
-                        <!-- Edit & Delete Buttons (Only for Post Author) -->
-                        {% if post.author == user %}
-                            <div class="space-x-2">
-                                <a href="{% url 'post-update' post.slug %}" 
-                                class="px-3 py-1 bg-gray-700 text-white rounded-lg text-sm hover:bg-gray-600">
-                                    Update
-                                </a>
-                                <a href="{% url 'post-delete' post.slug %}" 
-                                class="px-3 py-1 bg-red-600 text-white rounded-lg text-sm hover:bg-red-500">
-                                    Delete
-                                </a>
-                            </div>
-                        {% endif %}
-                </div>
-
-                <!-- Blog Image (Optional) -->
-                {% if post.image %}
-                <div class="mt-6">
-                    <img src="{{ post.image.url }}" 
-                        alt="Blog Image" class="w-full shadow-md">
-                </div>
-                {% endif %}
-
-                <div class="px-3">
-                    <!-- Blog Title -->
-                    <h2 class="text-3xl mt-4">{{ post.title }}</h2>
-
-                    <!-- Blog Content -->
-                    <p class="mt-3 text-gray-300 leading-relaxed">{{ post.content }}</p>
-                </div>
-                <div id="like-section" class="flex items-center gap-4 mt-4 px-3">
-                    <button 
-                      id="like-btn"
-                      data-id="{{ post.id }}"
-                      class="like-btn flex items-center gap-2 {% if user in post.likes.all %} text-white-500 bg-red-500 border-red-500 {% else %} text-red-500 {% endif %}px-4 py-1 rounded-full hover:bg-red-200 transition duration-200"
-                    >
-                      {% if user in post.likes.all %}
-                        ❤️ <span>Liked</span>
-                      {% else %}
-                        ❤ <span>Like</span>
-                      {% endif %}
-                    </button>
-                    <div>
-                        <span id="like-count" class="text-gray-700 text-sm">{{ post.total_likes }}</span>
-                        <span class="text-gray-500 text-sm">likes</span>
-                    </div>
-                </div>
-            </div>
-        </article>
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <!-- Blog Post Card -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 mb-8">
+    <!-- Blog Image -->
+    {% if post.image %}
+    <div class="w-full h-64 md:h-80 overflow-hidden">
+      <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full h-full object-cover">
     </div>
+    {% endif %}
 
-    <div class="max-w-2xl m-8">
-        <h2 class="text-2xl font-bold dark:text-white my-4">Comments</h2>
-        <div class="comment-list rounded-lg max-h-96 overflow-y-auto mb-8">
-            {% for comment in comments %}
-                {% include 'groups/partials/comment.html' with comment=comment %}
-            {% empty %}
-                <p class="text-gray-500">No comments yet.</p>
-            {% endfor %}
+    <!-- Post Content -->
+    <div class="p-6 md:p-8">
+      <!-- Author & Actions -->
+      <div class="flex items-start justify-between mb-6">
+        <div class="flex items-center space-x-3">
+          <a href="{% url 'profile' post.author.profile.slug %}">
+            <img src="{{ post.author.profile.profile_picture.url }}" alt="Profile Picture" class="w-10 h-10 rounded-full border-2 border-gray-200 dark:border-gray-600">
+          </a>
+          <div>
+            <a href="{% url 'profile' post.author.profile.slug %}" class="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+              {{ post.author.username }}
+            </a>
+            <p class="text-sm text-gray-500 dark:text-gray-400">{{ post.date_posted|date:"F d, Y" }}</p>
+          </div>
         </div>
-    </div>
+        
+        {% if post.author == user %}
+        <div class="flex space-x-2">
+          <a href="{% url 'blog-update' post.slug %}" class="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 rounded-lg text-sm transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+            </svg>
+            Edit
+          </a>
+          <a href="{% url 'blog-delete' post.slug %}" class="inline-flex items-center gap-1 px-3 py-1 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg text-sm transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
+            Delete
+          </a>
+        </div>
+        {% endif %}
+      </div>
 
-    <!-- Fixed comment form at the bottom -->
-    <div class="fixed bottom-0 left-0 p-2 right-0 bg-white dark:bg-gray-900 shadow-lg max-w-3xl mx-auto z-50 rounded-lg">
-        <form method="post" class="flex flex-row gap-2 space-x-2 max-w-3xl mx-auto">
-            {% csrf_token %}
-            <textarea id="comment_box" name="content" rows="1" placeholder="Add comment..."
-                    class="flex-1 border dark:bg-gray-800 dark:text-gray-300 rounded-lg p-2 resize-none"></textarea>
-            <input type="hidden" name="parent_id" id="parent_id">
-            <button class="bg-blue-500 text-white px-4 py-2 rounded-lg">Post</button>
-        </form>
+      <!-- Post Title & Content -->
+      <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-4">{{ post.title }}</h1>
+      <div class="prose dark:prose-invert max-w-none">
+        {{ post.content|linebreaks }}
+      </div>
+
+      <!-- Like Button -->
+      <div class="flex items-center gap-4 mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <button id="like-btn" data-id="{{ post.id }}" post-slug="{{ post.slug }}" 
+                class="like-btn flex items-center gap-2 {% if user in post.likes.all %}text-red-500 font-medium{% else %}text-gray-500 dark:text-gray-400{% endif %} hover:text-red-500 transition-colors">
+          {% if user in post.likes.all %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 20 20">
+              <path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" />
+            </svg>
+            Liked
+          {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+            </svg>
+            Like
+          {% endif %}
+        </button>
+        <span id="like-count" class="text-sm text-gray-500 dark:text-gray-400">{{ post.total_likes }} like{{ post.total_likes|pluralize }}</span>
+      </div>
     </div>
+  </div>
+
+  <!-- Comments Section -->
+  <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-200 dark:border-gray-700 mb-8">
+    <div class="p-6 md:p-8">
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Comments</h2>
+      
+      <!-- Comments List -->
+      <div class="space-y-6 max-h-[500px] overflow-y-auto pr-2 scrollbar-hidden">
+        {% for comment in comments %}
+          {% include 'blog/partials/comment.html' with comment=comment %}
+        {% empty %}
+          <div class="text-center py-8">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 mx-auto text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 mt-3">No comments yet. Be the first to comment!</p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Comment Form -->
+  <div class="sticky bottom-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 py-2 z-10 rounded-lg">
+    <div class="container mx-auto max-w-4xl px-2">
+      <form method="post" class="flex gap-3">
+        {% csrf_token %}
+        <div class="flex-1 relative">
+          <textarea id="comment_box" name="content" rows="1" placeholder="Add a comment..." 
+                  class="w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-200 rounded-lg px-4 py-3 pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          <input type="hidden" name="parent_id" id="parent_id">
+        </div>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-lg transition-colors">
+          Post
+        </button>
+      </form>
+    </div>
+  </div>
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const commentBox = document.getElementById("comment_box");
-        const parentInput = document.getElementById("parent_id");
-        const form = document.querySelector("form");
-        const commentList = document.querySelector(".comment-list");
-    
-        const postId = "{{ post.id }}";
-        const userName = "{{ user.username }}";
-    
-        // Inline reply handler
-        commentList.addEventListener("click", (e) => {
-            if (e.target.classList.contains("reply-btn")) {
-                const commentId = e.target.getAttribute("data-id");
-                const userToReply = e.target.getAttribute("user-name");
-                parentInput.value = commentId;
-                commentBox.focus();
-                commentBox.placeholder = `Reply to @${userToReply}...`;
-            }
-        });
-    
-        // WebSocket setup
-        const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-        const socket = new WebSocket(`${wsScheme}://${window.location.host}/ws/group/comments/${postId}/`);
-    
-        // Submit form via WebSocket
-        form.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const content = commentBox.value;
-            const parent_id = parentInput.value || null;
-    
-            if (content.trim() === "") return;
-    
-            const payload = {
-                content,
-                parent_id,
-            };
-    
-            socket.send(JSON.stringify(payload));
-            commentBox.value = "";
-            commentBox.placeholder = "Add a comment...";
-            parentInput.value = "";
-        });
-    
-        // Handle incoming comments
-        socket.onmessage = function (e) {
-            const data = JSON.parse(e.data);
-            const tempDiv = document.createElement("div");
-            tempDiv.innerHTML = data.comment_html;
+document.addEventListener("DOMContentLoaded", () => {
+    const commentBox = document.getElementById("comment_box");
+    const parentInput = document.getElementById("parent_id");
+    const form = document.querySelector("form");
+    const commentList = document.querySelector(".space-y-6");
 
-            if (data.parent_id) {
-                const parentEl = document.querySelector(`[data-id='${data.parent_id}']`).closest(".mb-4");
-                const replyWrapper = document.createElement("div");
-                replyWrapper.className = "ml-6 mt-4 border-l pl-4";
-                replyWrapper.appendChild(tempDiv.firstElementChild);
-                parentEl.appendChild(replyWrapper);
-            } else {
-                const newComment = document.createElement("div");
-                newComment.innerHTML = data.comment_html;
-                commentList.insertBefore(newComment, commentList.firstChild);
-            }
+    const postId = "{{ post.id }}";
+    const userName = "{{ user.username }}";
 
-        };
+    // Inline reply handler
+    commentList.addEventListener("click", (e) => {
+        if (e.target.classList.contains("reply-btn")) {
+            const commentId = e.target.getAttribute("data-id");
+            const userToReply = e.target.getAttribute("user-name");
+            parentInput.value = commentId;
+            commentBox.focus();
+            commentBox.placeholder = `Reply to @${userToReply}...`;
+        }
     });
 
-    document.getElementById('like-btn')?.addEventListener('click', function() {
-        const postId = "{{ post.slug }}"; // Use Django template tag to get the post ID
-        // const postId = "{{ post.id }}";
+    // WebSocket setup
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const socket = new WebSocket(`${wsScheme}://${window.location.host}/ws/comments/${postId}/`);
 
-        fetch(`/group/like/${postId}/`, {
+    // Submit form via WebSocket
+    form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const content = commentBox.value;
+        const parent_id = parentInput.value || null;
+
+        if (content.trim() === "") return;
+
+        const payload = {
+            content,
+            parent_id,
+        };
+
+        socket.send(JSON.stringify(payload));
+        commentBox.value = "";
+        commentBox.placeholder = "Add a comment...";
+        parentInput.value = "";
+    });
+
+    // Handle incoming comments
+    socket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        const tempDiv = document.createElement("div");
+        tempDiv.innerHTML = data.comment_html;
+
+        if (data.parent_id) {
+            const parentEl = document.querySelector(`[data-id='${data.parent_id}']`).closest(".comment-container");
+            const replyWrapper = document.createElement("div");
+            replyWrapper.className = "ml-6 md:ml-12 mt-4 border-l-2 border-gray-200 dark:border-gray-600 pl-4";
+            replyWrapper.appendChild(tempDiv.firstElementChild);
+            parentEl.appendChild(replyWrapper);
+        } else {
+            const newComment = document.createElement("div");
+            newComment.innerHTML = data.comment_html;
+            commentList.insertBefore(newComment, commentList.firstChild);
+        }
+    };
+
+    // Like functionality
+    document.getElementById('like-btn')?.addEventListener('click', function() {
+        const postSlug = "{{ post.slug }}";
+        const likeBtn = this;
+        const likeCount = document.getElementById('like-count');
+
+        fetch(`/post/like/${postSlug}/`, {
             method: 'POST',
             headers: {
                 'X-CSRFToken': getCookie('csrftoken'),
@@ -185,30 +191,39 @@
         })
         .then(response => response.json())
         .then(data => {
-            const likeBtn = document.getElementById('like-btn');
-            const likeCount = document.getElementById('like-count');
-            likeBtn.innerText = data.liked ? '❤️ Liked' : '❤ Like';
-            likeCount.innerText = data.like_count;
-            likeBtn.className = data.liked ? 'like-btn flex items-center gap-2 text-white-500 bg-red-500 border-red-500 px-4 py-1 rounded-full hover:bg-red-200 transition duration-200' : 'like-btn flex items-center gap-2 text-red-500 px-4 py-1 rounded-full hover:bg-red-200 transition duration-200'; 
+            likeBtn.innerHTML = data.liked 
+                ? `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 fill-current" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clip-rule="evenodd" /></svg> Liked`
+                : `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg> Like`;
+            
+            likeBtn.className = data.liked
+                ? 'like-btn flex items-center gap-2 text-red-500 font-medium hover:text-red-500 transition-colors'
+                : 'like-btn flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors';
+            
+            likeCount.textContent = `${data.like_count} like${data.like_count !== 1 ? 's' : ''}`;
         });
     });
-    
-    // Get CSRF token from cookie
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let cookie of cookies) {
-                const c = cookie.trim();
-                if (c.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(c.substring(name.length + 1));
-                    break;
-                }
+
+    // Auto-resize textarea
+    commentBox.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
+    });
+});
+
+// Get CSRF token from cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            const c = cookie.trim();
+            if (c.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(c.substring(name.length + 1));
+                break;
             }
         }
-        return cookieValue;
     }
+    return cookieValue;
+}
 </script>
-        
-    
 {% endblock %}

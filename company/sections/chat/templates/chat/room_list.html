@@ -1,107 +1,204 @@
 {% extends "dashboard/base.html" %}
-
+{% load static %}
 {% block content %}
-<div class="grid grid-cols-2 gap-4 mb-4">
-    <a href="{% url 'chat-list'%}">
-        <div class="max-w-3xl mx-auto p-4  shadow-md rounded-lg w-full flex justify-center">
-            <h2 class="text-2xl font-semibold dark:text-white mb-4 text-gray-600">Chats</h2>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header with Tabs -->
+    <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+        <nav class="-mb-px flex space-x-8">
+            <a href="{% url 'chat-list' %}" 
+               class="border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-4 px-1 text-sm font-medium">
+                Chats
+            </a>
+            <a href="{% url 'group-list' %}" 
+               class="border-b-2 border-blue-500 text-blue-600 dark:text-blue-400 dark:border-blue-400 whitespace-nowrap py-4 px-1 text-sm font-medium">
+                Groups
+            </a>
+        </nav>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="mb-6">
+        <div class="relative rounded-md shadow-sm">
+            <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+            </div>
+            <input type="text" 
+                   class="focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 pr-12 py-3 border-gray-300 dark:border-gray-600 dark:bg-gray-700 rounded-md" 
+                   placeholder="Search groups...">
+            <div class="absolute inset-y-0 right-0 flex items-center">
+                <button class="px-3 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                    <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                </button>
+            </div>
         </div>
-    </a>
+    </div>
 
-    <a href="{% url 'group-list'%}">
-        <div class="max-w-3xl mx-auto p-4 rounded-lg w-full flex justify-center">
-            <h2 class="text-2xl dark:text-white font-semibold mb-4">Groups</h2>
-        </div>
-    </a>
-</div>
+    <!-- Create New Group Button -->
+    <div class="mb-6">
+        <a href="{% url 'group-create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+            </svg>
+            Create New Group
+        </a>
+    </div>
 
-<div class="max-w-3xl mx-auto p-4 rounded-lg w-full" style="max-width: 600px;">
-    <h2 class="text-2xl font-semibold dark:text-white mb-4">Groups</h2>
-
-    {% if group_users %}
-        <ul id="group-list" class="">
+    <!-- Group List -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <h2 class="sr-only">Your Groups</h2>
+        
+        {% if group_users %}
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
             {% for group, details in group_users %}
-                <li data-id="{{ group.id }}" class="p-4 flex justify-between items-center">
-                    <a href="{% url 'chat-room' group.slug %}" class="flex items-center space-x-3 w-full">
-                        <img src="{{ group.profile_picture.url }}" alt="Profile Pic" class="w-10 h-10 rounded-full">
-                        <div class="flex-1">
-                            <div class="flex justify-between">
-                                <span class="text-lg dark:text-gray-300 font-medium truncate">{{ group }}</span>
-                                <span class="text-sm text-gray-500">{{ details.timestamp|date:"m/d/y" }}</span>
+            <li class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" data-id="{{ group.id }}">
+                <a href="{% url 'chat-room' group.slug %}" class="block px-6 py-4">
+                    <div class="flex items-center space-x-4">
+                        <!-- Group Avatar -->
+                        <div class="relative flex-shrink-0">
+                            <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
+                                 src="{{ group.profile_picture.url }}" 
+                                 alt="{{ group.name }} group picture">
+                            <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800 bg-green-500"></span>
+                        </div>
+                        
+                        <!-- Group details -->
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-baseline">
+                                <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                    {{ group.name }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                    {{ details.timestamp|date:"M j, g:i a" }}
+                                </p>
                             </div>
-                            <div class="flex justify-between">
-                                <span class="text-sm text-gray-400">
-                                    {{ details.sender }}:
-                                    {{ details.last_message|truncatechars:28|default:"No messages yet" }}
-                                </span>
+                            <div class="flex justify-between items-center mt-1">
+                                <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                    <span class="font-medium">{{ details.sender|default:"System" }}:</span> 
+                                    {{ details.last_message|truncatechars:40|default:"No messages yet" }}
+                                </p>
                                 {% if details.unread_count > 0 %}
-                                    <span id="chat-badge" class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">{{ details.unread_count }}</span>
+                                <span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-600 text-xs font-medium text-white">
+                                    {{ details.unread_count }}
+                                </span>
                                 {% endif %}
                             </div>
-                        </div>
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p class="text-gray-500">No recent chats.</p>
-    {% endif %}
-</div>
-<script>
-    {% comment %} const groupListSocket = new WebSocket("ws://" + window.location.host + "/ws/group-list/"); {% endcomment %}
-    const groupListSocket = new WebSocket("wss://" + window.location.host + "/ws/group-list/");
-
-
-    groupListSocket.onmessage = function (event) {
-        const data = JSON.parse(event.data);
-        // console.log(data);
-        // Extract data from WebSocket event
-        const groupSlug = data.slug;
-        const groupName = data.name;
-        const group_id = data.id;
-        const profilePicture = data.picture || "/static/default-group.png";
-        const timestamp = data.timestamp;
-        const lastMessage = data.message || "No messages yet";
-        const sender = data.sender;
-        const unreadCount = data.unread_count || 0;
-        const totalCount = data.chat_count || 0;
-        // const groupCount = "{{ group_count }}"
-    
-        // Check if the group item already exists
-        const groupListContainer = document.querySelector("#group-list"); // Make sure the UL has this ID
-        // console.log(data)
-        if (!groupListContainer) return;
-            const existingItem = document.querySelector(`[data-id="${group_id}"]`);
-
-        // Remove existing chat item for same user to avoid duplicates
-        if (existingItem) {
-            existingItem.remove();
-        }
-        const badge = unreadCount > 0
-            ? `<span id="chat-badge" class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded-full">${unreadCount}</span>`
-            : '';
-    
-        const groupItemHTML = `
-            <li data-id="${group_id}" class="p-4 flex justify-between items-center">
-                <a href="/chat/room/${groupSlug}/" class="flex items-center space-x-3 w-full">
-                    <img src="${profilePicture}" alt="Profile Pic" class="w-8 h-8 rounded-full">
-                    <div class="flex-1">
-                        <div class="flex justify-between">
-                            <span class="text-lg dark:text-gray-300 font-medium">${groupName}</span>
-                            <span class="text-sm text-gray-500">${timestamp}</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span class="text-sm text-gray-500">${sender}: ${lastMessage}</span>
-                            ${badge}
                         </div>
                     </div>
                 </a>
             </li>
-        `;
-            // Insert new group item at the top
-        groupListContainer.insertAdjacentHTML("afterbegin", groupItemHTML);
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="px-6 py-12 text-center">
+            <svg class="mx-auto h-12 w-12 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+            <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No groups yet</h3>
+            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Create or join a group to start collaborating</p>
+            <div class="mt-6">
+                <a href="{% url 'group-create' %}" class="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                    </svg>
+                    Create Group
+                </a>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    const groupListSocket = new WebSocket(
+        window.location.protocol === 'https:' 
+            ? 'wss://' + window.location.host + '/ws/group-list/'
+            : 'ws://' + window.location.host + '/ws/group-list/'
+    );
+
+    groupListSocket.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        console.log('New group activity:', data);
         
+        const groupList = document.querySelector('ul');
+        if (!groupList) return;
+        
+        // Remove existing group item if it exists
+        const existingItem = groupList.querySelector(`[data-id="${data.id}"]`);
+        if (existingItem) {
+            existingItem.remove();
+        }
+        
+        // Create new group item
+        const newItem = document.createElement('li');
+        newItem.className = 'hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors';
+        newItem.setAttribute('data-id', data.id);
+        
+        const unreadBadge = data.unread_count > 0 
+            ? `<span class="inline-flex items-center justify-center h-5 w-5 rounded-full bg-blue-600 text-xs font-medium text-white">${data.unread_count}</span>`
+            : '';
+        
+        newItem.innerHTML = `
+            <a href="/chat/room/${data.slug}/" class="block px-6 py-4">
+                <div class="flex items-center space-x-4">
+                    <div class="relative flex-shrink-0">
+                        <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
+                             src="${data.picture || '{% static "default-group.png" %}'}" 
+                             alt="${data.name} group picture">
+                        <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800 bg-green-500"></span>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex justify-between items-baseline">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
+                                ${data.name}
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">
+                                ${new Date().toLocaleString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: 'numeric' })}
+                            </p>
+                        </div>
+                        <div class="flex justify-between items-center mt-1">
+                            <p class="text-sm text-gray-500 dark:text-gray-400 truncate">
+                                <span class="font-medium">${data.sender || 'System'}:</span> 
+                                ${data.message || 'No messages yet'}
+                            </p>
+                            ${unreadBadge}
+                        </div>
+                    </div>
+                </div>
+            </a>
+        `;
+        
+        // Add to top of list
+        groupList.insertBefore(newItem, groupList.firstChild);
+        
+        // Play notification sound if unread
+        if (data.unread_count > 0) {
+            const audio = new Audio('{% static "sounds/notification.mp3" %}');
+            audio.play().catch(e => console.log('Audio play failed:', e));
+        }
+    };
+
+    // Handle connection errors
+    groupListSocket.onclose = function(e) {
+        console.error('Group socket closed unexpectedly');
+        // Optionally show a toast notification
+        showToast('Connection lost. Reconnecting...', 'error');
     };
     
+    // Reconnect if closed
+    function setupWebSocket() {
+        groupListSocket.onclose = function() {
+            setTimeout(setupWebSocket, 5000); // Try to reconnect after 5 seconds
+        };
+    }
+    
+    // Show toast notification
+    function showToast(message, type = 'info') {
+        // Implement your toast notification system here
+        console.log(`${type}: ${message}`);
+    }
 </script>
 {% endblock %}

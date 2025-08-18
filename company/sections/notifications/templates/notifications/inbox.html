@@ -1,58 +1,144 @@
-{% extends "dashboard/base.html"%}
+{% extends "dashboard/base.html" %}
 {% block content %}
-<div class="container mx-auto max-w-3xl">
-    <h2 class="text-2xl p-3 font-bold dark:text-white">Notifications</h2>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Notifications</h2>
+        <div class="flex items-center space-x-2">
+            <button class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">
+                Mark all as read
+            </button>
+            <button class="text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" />
+                </svg>
+            </button>
+        </div>
+    </div>
 
-    <ul>
-        {% for notification in notifications %}
-        <li class="mb-1 p-2 justify-between items-center {% if not notification.is_read %}bg-gray-100 dark:bg-gray-800{% endif %}">
-            <a href="{% url 'mark-notification-as-read' notification.pk %}">
-                {% if notification.notification_type == 'request' %}
-                <div class="flex space-x-4 items-center">
-                    <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
-                    <div class="px-2 px-1">
-                        <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
-                        <div class="mt-2">
-                            <a href="{% url 'group-accept' notification.sender.username notification.group.slug %}">
-                                <button class="ml-2 bg-blue-500 text-white px-2 text-sm py-1 rounded">Accept</button>
-                            </a>
-                            <a href="#">
-                                <button class="ml-2 bg-red-500 text-white px-2 text-sm py-1 rounded">Decline</button>   
-                            </a>
+    <!-- Notification List -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+        <ul class="divide-y divide-gray-200 dark:divide-gray-700">
+            {% for notification in notifications %}
+            <li class="{% if not notification.is_read %}bg-blue-50/30 dark:bg-blue-900/10{% else %}hover:bg-gray-50 dark:hover:bg-gray-700/50{% endif %} transition-colors">
+                <a href="{% url 'mark-notification-as-read' notification.pk %}" class="block px-4 py-4">
+                    <div class="flex items-start space-x-4">
+                        <!-- Avatar -->
+                        <div class="flex-shrink-0 relative">
+                            <img src="{{ notification.sender.profile.profile_picture.url }}" 
+                                 alt="{{ notification.sender.username }}"
+                                 class="h-12 w-12 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover">
+                            <!-- Notification type icon -->
+                            <div class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full p-1 shadow">
+                                {% if notification.notification_type == 'request' %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                </svg>
+                                {% elif notification.notification_type == 'comment' %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                                </svg>
+                                {% elif notification.notification_type == 'like' %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                </svg>
+                                {% else %}
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                                </svg>
+                                {% endif %}
+                            </div>
                         </div>
-                        <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
-                    </div>
-                </div>
-        
-                {% elif notification.notification_type == 'comment' %}
-                    <div class="flex space-x-2 items-center">
-                        <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
-                        <div class="px-2 px-1">
-                            <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
-                            <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
+
+                        <!-- Notification content -->
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-gray-900 dark:text-white">
+                                {{ notification.message }}
+                            </p>
+                            <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {{ notification.created_at|timesince }} ago
+                            </p>
+
+                            <!-- Action buttons for request type -->
+                            {% if notification.notification_type == 'request' %}
+                            <div class="mt-3 flex space-x-2">
+                                <a href="{% url 'group-accept' notification.sender.username notification.group.slug %}"
+                                   class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                                    Accept
+                                </a>
+                                <a href="#"
+                                   class="inline-flex items-center px-3 py-1.5 border border-gray-300 dark:border-gray-600 text-xs font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                    Decline
+                                </a>
+                            </div>
+                            {% endif %}
                         </div>
-                    </div>
-                {% elif notification.notification_type == 'like' %}
-                    <div class="flex space-x-2 items-center">
-                        <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
-                        <div class="px-2 px-1">
-                            <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
-                            <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
+
+                        <!-- Unread indicator -->
+                        {% if not notification.is_read %}
+                        <div class="flex-shrink-0">
+                            <span class="h-2 w-2 rounded-full bg-blue-500"></span>
                         </div>
+                        {% endif %}
                     </div>
-                {% else %}
-                    <div class="flex space-x-2 items-center">
-                        <img src="{{ notification.sender.profile.profile_picture.url }}" alt="Sender" class="w-16 h-16 rounded-full border-2 border-gray-400">
-                        <div class="px-2 px-1">
-                            <p class="text-gray-800 dark:text-gray-300 text-sm">{{ notification.message }}</p>
-                            <span class="text-xs text-gray-400">{{ notification.created_at|timesince }}</span>
-                        </div>
-                    </div>
-                {% endif %}
+                </a>
+            </li>
+            {% empty %}
+            <li class="px-4 py-6 text-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No notifications</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">You'll see notifications here when you receive them.</p>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Pagination (if needed) -->
+    {% if is_paginated %}
+    <div class="mt-6 flex items-center justify-between">
+        <div class="flex-1 flex justify-between sm:hidden">
+            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Previous
             </a>
-        </li>
-        {% endfor %}
-    </ul>
+            <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
+                Next
+            </a>
+        </div>
+        <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm text-gray-700 dark:text-gray-300">
+                    Showing <span class="font-medium">1</span> to <span class="font-medium">10</span> of <span class="font-medium">20</span> results
+                </p>
+            </div>
+            <div>
+                <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Previous</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                    <a href="#" aria-current="page" class="z-10 bg-blue-50 border-blue-500 text-blue-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                        1
+                    </a>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                        2
+                    </a>
+                    <a href="#" class="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium">
+                        3
+                    </a>
+                    <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
+                        <span class="sr-only">Next</span>
+                        <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </a>
+                </nav>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
-    

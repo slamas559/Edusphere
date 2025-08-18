@@ -41,11 +41,13 @@ CSRF_TRUSTED_ORIGINS = ["https://edusphere-5dmb.onrender.com"]
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'channels',
     'daphne',
     'jazzmin',
+    'tailwind',
+    'django_browser_reload',
+    'theme',
     'cloudinary_storage',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -71,11 +73,16 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    "django_browser_reload.middleware.BrowserReloadMiddleware",
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+TAILWIND_APP_NAME = 'theme'
+
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 ROOT_URLCONF = 'company.urls'
 
@@ -190,7 +197,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
-            os.path.join(BASE_DIR, "static")
+            os.path.join(BASE_DIR, "theme/static/css/dist")
 ]
 
 

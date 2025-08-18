@@ -1,81 +1,206 @@
-{% extends 'dashboard/base.html'%}
+{% extends 'dashboard/base.html' %}
 {% load static %}
 
 {% block content %}
-<div class="px-4 py-4 bg-gray-100 dark:bg-gray-900">
+<div class="px-2 py-2 sm:px-4 lg:px-4">
   <!-- Welcome Section -->
-  <div class="mb-6">
-    <h1 class="text-3xl font-bold text-gray-800 dark:text-white">Welcome, <span class="text-gray-600 dark:text-gray-400">{{ request.user.username }}!</span> ✨</h1>
-    <p class="text-gray-500 mt-2 italic dark:text-gray-300">{{quote}} by, {{author}}</p>
+  <div class="mb-2">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ request.user.username }}</span>!</h1>
+        <p class="text-gray-600 dark:text-gray-300 mt-2">{{ quote }} <span class="text-gray-500 dark:text-gray-400">— {{ author }}</span></p>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
+          <svg class="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd"></path>
+          </svg>
+          {{ current_date|date:"F j, Y" }}
+        </span>
+      </div>
+    </div>
   </div>
 
-  <!-- Cards Grid -->
-  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    <!-- Notifications -->
-    <div class="bg-white dark:bg-gray-800 h-64 rounded-lg shadow-lg p-5 items-center">
-      <div class="text-blue-500">
-        <i class="fa fa-bell text-4xl"></i>
-      </div>
-      <h2 class="font-semibold text-xl dark:text-gray-300 mt-2">Notifications</h2>
-      <div class="flex flex-col items-center mt-8">
-        <p class="text-gray-500 dark:text-gray-400 text-sm">You have {{ notification_count }} new notifications</p>
-        <p class="text-gray-500 dark:text-gray-400 text-sm mt-2">Stay updated with your tasks</p>
-        <a href="{% url 'notification-inbox' %}" class="text-blue-600 text-sm dark:text-gray-300 mt-2 hover:underline">View Notifications</a>
+  <!-- Stats Cards Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <!-- Notifications Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-all hover:shadow-md hover:-translate-y-1">
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-medium text-gray-500 dark:text-gray-400">Notifications</h3>
+            <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">{{ notification_count }}</p>
+          </div>
+          <div class="p-3 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-6">
+          <a href="{% url 'notification-inbox' %}" class="text-sm font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 inline-flex items-center">
+            View all notifications
+            <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
       </div>
     </div>
 
-    <!-- Courses -->
-    <div class="bg-white shadow-lg p-5 h-64 rounded-lg dark:bg-gray-800 flex-col items-center">
-      <div class="text-blue-500">
-        <i class="fa fa-book text-4xl"></i>
+    <!-- Courses Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-all hover:shadow-md hover:-translate-y-1">
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-medium text-gray-500 dark:text-gray-400">Your Courses</h3>
+            <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">5</p>
+          </div>
+          <div class="p-3 rounded-lg bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 6.754 18 8.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-6">
+          <a href="#" class="text-sm font-medium text-green-600 dark:text-green-400 hover:text-green-500 dark:hover:text-green-300 inline-flex items-center">
+            View all courses
+            <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
       </div>
-      <h2 class="font-semibold text-xl dark:text-gray-300 mt-2">Your Courses</h2>
-      <div class="flex flex-col items-center mt-8">
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Access and manage courses</p>
-        <a href="#" class="text-green-600 text-sm dark:text-gray-300 mt-2 hover:underline">View Courses</a>
-      </div>
-      </div>
+    </div>
 
-    <!-- Upcoming Deadlines -->
-    <div class="bg-white shadow-lg rounded-lg p-5 h-64 dark:bg-gray-800 items-center">
-      <div class="text-yellow-500">
-        <i class="fa fa-calendar-alt text-4xl"></i>
+    <!-- Deadlines Card -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden transition-all hover:shadow-md hover:-translate-y-1">
+      <div class="p-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-medium text-gray-500 dark:text-gray-400">Upcoming Deadlines</h3>
+            <p class="mt-2 text-3xl font-semibold text-gray-900 dark:text-white">3</p>
+          </div>
+          <div class="p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+        <div class="mt-6">
+          <a href="#" class="text-sm font-medium text-yellow-600 dark:text-yellow-400 hover:text-yellow-500 dark:hover:text-yellow-300 inline-flex items-center">
+            View calendar
+            <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </a>
+        </div>
       </div>
-      <h2 class="font-semibold text-xl dark:text-gray-300 mt-2">Deadlines</h2>
-      <div class="flex flex-col items-center mt-8">
-        <p class="text-gray-500 dark:text-gray-400 text-sm">Stay on top of tasks</p>
-        <a href="#" class="text-yellow-600 text-sm dark:text-gray-300 mt-2 hover:underline">Check Calendar</a>
-      </div>
-      </div>
-
-    <!-- AI Helper -->
-    {% comment %} <div class="bg-white shadow-lg dark:bg-gray-800 p-5 flex flex-col items-center">
-      <div class="text-gray-500">
-        <img width="20" height="20" src="https://img.icons8.com/ios/50/sparkling.png" alt="sparkling"/>
-      </div>
-      <h2 class="font-semibold dark:text-gray-300 mt-2">Ask AI</h2>
-
-      <p class="text-gray-500 text-sm dark:text-gray-400">Get assignment help</p>
-      <a href="#" class="text-purple-600 dark:text-gray-300 text-sm mt-2 hover:underline">Chat Now</a>
-    </div> {% endcomment %}
+    </div>
   </div>
 
-  <!-- Bottom Section -->
-  <div class="grid grid-cols-1 md:grid-cols-2 h-64 lg:grid-cols-2 gap-6 mt-10">
+  <!-- Action Cards -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <!-- Resource Library -->
-    <div class="bg-white p-6 rounded-lg border-l border-gray-200 shadow-lg dark:bg-gray-800">
-      <h3 class="text-2xl font-semibold dark:text-gray-300 text-gray-800 mb-4">Resource Library 📚</h3>
-      <p class="text-gray-500 dark:text-gray-400">Browse uploaded PDFs, study materials, and more.</p>
-      <a href="{% url 'archive' %}" class="mt-4 dark:text-gray-300 inline-block text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Browse Resources</a>
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="p-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Resource Library 📚</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Browse uploaded PDFs, study materials, and more.</p>
+            <a href="{% url 'archive' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800 transition-colors">
+              Browse Resources
+            </a>
+          </div>
+          <div class="hidden sm:block p-4 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
 
-    <!-- Join Study Groups -->
-    <div class="bg-white p-6 rounded-lg border-l border-gray-200 shadow-lg dark:bg-gray-800">
-      <h3 class="text-2xl dark:text-gray-300 font-semibold text-gray-800 mb-4">Join Study Groups 💬</h3>
-      <p class="text-gray-500 dark:text-gray-400">Collaborate and discuss with peers.</p>
-      <a href="{% url 'group-home' %}" class="mt-4 dark:text-gray-300 inline-block text-white bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded">Find a Group</a>
+    <!-- Study Groups -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="p-6">
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Study Groups 💬</h3>
+            <p class="text-gray-600 dark:text-gray-300 mb-6">Collaborate and discuss with peers in study groups.</p>
+            <a href="{% url 'group-home' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-colors">
+              Find a Group
+            </a>
+          </div>
+          <div class="hidden sm:block p-4 rounded-lg bg-gray-50 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
+  <!-- Recent Activity (Optional) -->
+  <div class="mt-8">
+    <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-4">Recent Activity</h3>
+    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="divide-y divide-gray-200 dark:divide-gray-700">
+        <!-- Activity Item -->
+        <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <img class="h-8 w-8 rounded-full" src="{% static 'default-profile.png' %}" alt="User profile">
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                <span class="text-blue-600 dark:text-blue-400">You</span> submitted Math assignment
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">2 hours ago</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Activity Item -->
+        <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <img class="h-8 w-8 rounded-full" src="{% static 'default-profile.png' %}" alt="User profile">
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                <span class="text-green-600 dark:text-green-400">Sarah</span> commented on your post
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">5 hours ago</p>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Activity Item -->
+        <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+          <div class="flex items-center">
+            <div class="flex-shrink-0">
+              <img class="h-8 w-8 rounded-full" src="{% static 'default-profile.png' %}" alt="User profile">
+            </div>
+            <div class="ml-3">
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                New resource uploaded in <span class="text-purple-600 dark:text-purple-400">Computer Science 101</span>
+              </p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">1 day ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="px-4 py-3 bg-gray-50 dark:bg-gray-700 text-right sm:px-6">
+        <a href="#" class="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white inline-flex items-center">
+          View all activity
+          <svg xmlns="http://www.w3.org/2000/svg" class="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}
