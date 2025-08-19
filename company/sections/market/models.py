@@ -5,22 +5,9 @@ import random
 from django.urls import reverse, reverse_lazy
 
 
-CATEGORY = [
-        ('all', 'All Category'),
-        ('academic_template', 'Academic Template'),
-        ('text_books', 'Text Books'),
-        ('stationeries', 'Stationeries'),
-        ('electronics', 'Electronics'),
-        ('gadget', 'Gadget'),
-        ('Phones', 'Phones'),
-        ('home_appliances', 'Home Appliances'),
-        ('furniture', 'Furniture'),
-        ('laptops', 'Laptops')
-    ]
-
 # Categories (e.g., Books, Electronics, Notes, etc.)
 class Category(models.Model):
-    name = models.CharField(max_length=255, default="", choices=CATEGORY, unique=True)  # Unique category name
+    name = models.CharField(max_length=255)  # Unique category name
     slug = models.SlugField(unique=True, default="")  # URL-friendly name
     parent = models.ForeignKey(
         'self', on_delete=models.CASCADE, null=True, blank=True, related_name='subcategories'
