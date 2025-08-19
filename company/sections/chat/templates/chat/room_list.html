@@ -1,9 +1,9 @@
 {% extends "dashboard/base.html" %}
 {% load static %}
 {% block content %}
-<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+<div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 ">
     <!-- Header with Tabs -->
-    <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+    <div class="border-b border-gray-200 dark:border-gray-700 mb-4">
         <nav class="-mb-px flex space-x-8">
             <a href="{% url 'chat-list' %}" 
                class="border-b-2 border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 whitespace-nowrap py-4 px-1 text-sm font-medium">
@@ -17,7 +17,7 @@
     </div>
 
     <!-- Search Bar -->
-    <div class="mb-6">
+    <div class="mb-4">
         <div class="relative rounded-md shadow-sm">
             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -38,7 +38,7 @@
     </div>
 
     <!-- Create New Group Button -->
-    <div class="mb-6">
+    <div class="mb-4">
         <a href="{% url 'group-create' %}" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
             <svg class="-ml-1 mr-2 h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
@@ -55,7 +55,7 @@
         <ul class="divide-y divide-gray-200 dark:divide-gray-700">
             {% for group, details in group_users %}
             <li class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" data-id="{{ group.id }}">
-                <a href="{% url 'chat-room' group.slug %}" class="block px-6 py-4">
+                <a href="{% url 'chat-room' group.slug %}" class="block px-3 py-3">
                     <div class="flex items-center space-x-4">
                         <!-- Group Avatar -->
                         <div class="relative flex-shrink-0">

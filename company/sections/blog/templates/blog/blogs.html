@@ -2,9 +2,9 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-3 lg:px-5 py-4">
+<div class="max-w-7xl mx-auto sm:px-3 lg:px-5 py-4">
     <!-- Header with Search and Create Post -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-center px-4 gap-4 mb-3">
         <form method="get" action="." class="w-full md:w-1/2">
             <div class="relative">
                 <input 
@@ -40,10 +40,10 @@
         </div>
     {% endif %}
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
         {% for post in posts %}
         <a href="{% url 'blog-detail' post.slug %}" class="group">
-            <div class="h-full flex flex-col bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
+            <div class="h-full flex flex-col bg-white dark:bg-gray-800 overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700">
                 <!-- Blog Image -->
                 <div class="relative overflow-hidden h-48">
                     {% if post.image %}
@@ -117,8 +117,8 @@
                                 <span>{{ post.comments.count }}</span>
                             </div>
                         </div>
-                        
-                        <span class="text-sm text-blue-500 dark:text-blue-400 font-medium hover:underline">Read more</span>
+
+                        <span class="text-sm text-blue-500 dark:text-blue-400 font-medium hover:underline"><a href="{% url 'blog-detail' post.slug %}">Read more</a></span>
                     </div>
                 </div>
             </div>

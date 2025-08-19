@@ -25,7 +25,7 @@ def chat_room(request, slug):
         msg.read_by.add(request.user)
 
 
-    return render(request, "chat/chat_room.html", {"room": group, "messages": messages})
+    return render(request, "chat/chat_room.html", {"room": group, "chats": messages})
 
 @login_required
 def group_list(request):
@@ -98,4 +98,4 @@ def private_chat(request, username):
     # Mark messages as read for the current user
     unread_messages = Message.objects.filter(sender=receiver, receiver=request.user, read=False)
     unread_messages.update(read=True)
-    return render(request, "chat/private_chat.html", {"receiver": receiver, "messages": messages})
+    return render(request, "chat/private_chat.html", {"receiver": receiver, "chats": messages})

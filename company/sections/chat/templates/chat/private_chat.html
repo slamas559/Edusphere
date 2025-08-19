@@ -13,17 +13,16 @@
 
     <!-- Chat Messages -->
     <div id="chat-messages" class="w-full overflow-x-hidden overflow-y-auto p-2 scrollbar-hidden bg-gray-100 dark:bg-gray-900 rounded-lg" style="height: 75vh;">
-        {% if messages %}
+        {% if chats %}
             <div id="scroll-anchor"></div>
         {% endif %}
-        {% for message in messages %}
-            <div class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
-                <div style="max-width:60%" class="inline-block px-2 py-1 rounded-lg text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
-                        <p style="font-size:14px;">{{ message.content }}
-                            <span style="font-size:8px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
-                            {{ message.timestamp|date:"h:i" }}
-                            </span>
-                        </p>
+        {% for chat in chats %}
+            <div class="mb-2 {% if chat.sender == request.user %} text-right {% endif %}">
+                <div style="max-width:60%" class="inline-block px-3 py-1 rounded-lg text-left {% if chat.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                        <p style="font-size:14px;">{{ chat.content }}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-600 dark:text-gray-300">{{ chat.timestamp|date:"h:i" }}</p>
                 </div>
             </div>
         {% empty %}

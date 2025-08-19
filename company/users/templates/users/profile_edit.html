@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg">
+<div class="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-3 rounded-lg shadow-lg">
     <h2 class="text-2xl font-bold text-gray-800 dark:text-white text-center mb-6">Edit Profile</h2>
 
     <form method="POST" enctype="multipart/form-data" class="space-y-4">
@@ -11,7 +11,7 @@
         <!-- Profile Picture Upload -->
         <div class="flex items-center space-x-4">
             <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture"
-                 class="w-24 h-24 rounded-full border-2 border-gray-300 shadow-md">
+                 class="w-20 h-20 rounded-full border-2 border-gray-300 shadow-md">
             <div class="flex flex-col">
                 <label class="text-sm font-medium dark:text-gray-400 text-gray-700">Change Profile Picture</label>
                 <input type="file" name="profile_picture" class="mt-1 text-sm text-gray-500">

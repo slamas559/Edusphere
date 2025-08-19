@@ -1,8 +1,8 @@
 {% extends "dashboard/base.html" %}
 {% block content %}
-<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
     <!-- Header with Search and Create Group -->
-    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-4">
         <form method="get" class="w-full md:w-1/2">
             <div class="relative">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -37,7 +37,7 @@
         <ul class="divide-y divide-gray-200 dark:divide-gray-700">
             {% for group in groups %}
             <li class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                <a href="{% url 'group-detail' group.slug %}" class="block px-6 py-4">
+                <a href="{% url 'group-detail' group.slug %}" class="block px-2 py-4">
                     <div class="flex items-center space-x-4">
                         <!-- Group Avatar -->
                         <div class="flex-shrink-0">

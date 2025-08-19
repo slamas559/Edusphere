@@ -11,33 +11,33 @@
     <div id="chat-messages" class="overflow-y-auto scrollbar-hidden p-3 bg-gray-100 dark:bg-gray-900 rounded-lg p-0" style="height:75vh;">
         {% if request.user in room.members.all %}
             {% with unread_marked=False %}
-                {% for message in messages %}
-                    {% if not message.read_by.all|contains_user:request.user and not unread_marked %}
+                {% for chat in chats %}
+                    {% if not chat.read_by.all|contains_user:request.user and not unread_marked %}
                         {% with unread_marked=True %}
-                            <div id="first-unread" class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
+                            <div id="first-unread" class="mb-2 {% if chat.sender == request.user %} text-right {% endif %}">
                         {% endwith %}
                     {% else %}
-                        <div class="mb-2 {% if message.sender == request.user %} text-right {% endif %}">
+                        <div class="mb-2 {% if chat.sender == request.user %} text-right {% endif %}">
                     {% endif %}
                         <div style="max-width:80%" class="inline-block">
-                            {% if message.sender == request.user %}
-                                <div class="px-3 py-2 rounded-lg space-x-3 w-full text-left {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
-                                    <p style="font-size:14px;">{{ message.content }}
-                                        <span style="font-size:8px;" class="{% if message.sender == request.user %} text-gray-800 {% else %} text-gray-500 {% endif %} mt-2">
-                                        {{ message.timestamp|date:"h:i" }}
-                                        </span>
-                                    </p>
+                            {% if chat.sender == request.user %}
+                                <div class="px-3 py-2 rounded-lg space-x-3 w-full text-left {% if chat.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                                    <p style="font-size:14px;">{{ chat.content }}</p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] text-gray-600 dark:text-gray-300">{{ chat.timestamp|date:"h:i" }}</p>
                                 </div>
                             {% else %}
                                 <div class="flex space-x-2 w-full">
-                                    <img class="w-8 h-8 rounded-full" src="{{ message.sender.profile.profile_picture.url }}">
-                                    <div class="px-2 py-1 rounded-lg {% if message.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
-                                        <strong>{{ message.sender.username }}</strong> 
-                                        <p style="font-size:14px;">{{ message.content }}
-                                            <span style="font-size:10px;" class="text-gray-500 mt-1">
-                                                {{ message.timestamp|date:"H:i" }}
-                                            </span>
-                                        </p>
+                                    <img class="w-8 h-8 rounded-full" src="{{ chat.sender.profile.profile_picture.url }}">
+                                    <div>
+                                        <div class="px-2 py-1 rounded-lg {% if chat.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
+                                            <strong class="text-gray-900">{{ chat.sender.username }}</strong> 
+                                            <p class="text-gray-900" style="font-size:14px;">{{ chat.content }}</p>
+                                        </div>
+                                        <div>
+                                            <p class="text-[10px] text-gray-600 dark:text-gray-300">{{ chat.timestamp|date:"h:i" }}</p>
+                                        </div>
                                     </div>
                                 </div>
                             {% endif %}
