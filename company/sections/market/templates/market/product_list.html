@@ -54,7 +54,7 @@
 
   <!-- Products Grid -->
   {% if products %}
-    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 lg:gap-3 xl:gap-3">
       {% for product in products %}
       <div class="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400">
         <div class="relative aspect-square overflow-hidden">
@@ -64,7 +64,7 @@
           </div>
         </div>
         
-        <div class="p-4">
+        <div class="p-3">
           <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2">{{ product.title }}</h2>
           <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -75,11 +75,8 @@
           </div>
           
           <div class="mt-4">
-            <a href="{% url 'product-detail' product.id %}" class="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors duration-200">
+            <a href="{% url 'product-detail' product.id %}" class="inline-flex items-center justify-center w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors duration-200">
               View Details
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-              </svg>
             </a>
           </div>
         </div>
