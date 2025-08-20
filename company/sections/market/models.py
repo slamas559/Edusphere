@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.template.defaultfilters import slugify
 import random
 from django.urls import reverse, reverse_lazy
-
+from cloudinary.models import CloudinaryField
+from cloudinary.utils import cloudinary_url
 
 # Categories (e.g., Books, Electronics, Notes, etc.)
 class Category(models.Model):
@@ -24,7 +25,7 @@ class Product(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    image = models.ImageField(upload_to="marketplace/products/", blank=True, null=True)
+    image = CloudinaryField("image", blank=True, null=True)
     seller = models.ForeignKey(User, on_delete=models.CASCADE)  # Seller (User)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name="products")
     location = models.CharField(max_length=255, default="")
@@ -42,6 +43,17 @@ class Product(models.Model):
             self.slug = f"{self.id}-{slugify(self.title)}--{self.seller.username}"  # Example: 123456789012-my-title
         return super().save(*args, **kwargs)
 
+    def get_resized_image(self, width=400, height=400, crop="fill"):
+        if not self.image:
+            return None
+        url, options = cloudinary_url(
+            self.image.public_id,
+            width=width,
+            height=height,
+            crop=crop
+        )
+        return url
+    
     def get_absolute_url(self):
         return reverse("product-detail", kwargs={"pk":self.pk})
 

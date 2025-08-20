@@ -9,7 +9,7 @@
       <!-- Product Image -->
       <div class="lg:w-1/2">
         <div class="relative aspect-square overflow-hidden">
-          <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
+          <img src="{{ product.get_resized_image }}" alt="{{ product.title }}" class="w-full h-full object-cover transition-transform duration-300 hover:scale-105">
           {% if product.seller == user %}
           <div class="absolute top-4 right-4">
             <a href="{% url 'product-update' product.id %}" class="bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-md transition-all">
