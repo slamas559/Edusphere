@@ -27,6 +27,8 @@ class Profile(models.Model):
         return f"{self.user.username} Profile"
 
     def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.user.username}-{self.id}")
         # Only process if profile_picture is a new upload (not an existing remote Cloudinary file)
         if self.profile_picture and hasattr(self.profile_picture, "_file"):  
             try:

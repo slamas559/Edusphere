@@ -95,12 +95,12 @@
                         <div>
                             <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true" data-dropdown-toggle="user-dropdown">
                                 <span class="sr-only">Open user menu</span>
-                                {% if user.profile.profile_picture == "default.jpg" %}
-                                <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                                    {{ user.username.0|upper }}
-                                </div>
+                                {% if not user.profile.profile_picture %}
+                                    <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                        {{ user.username.0|upper }}
+                                    </div>
                                 {% else %}
-                                <img class="h-8 w-8 rounded-full object-cover" src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }} profile picture">
+                                    <img class="h-8 w-8 rounded-full object-cover" src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }} profile picture">
                                 {% endif %}
                             </button>
                         </div>
@@ -129,7 +129,7 @@
     <!-- Sidebar -->
     <aside id="logo-sidebar" class="fixed top-0 left-0 z-30 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
         <div class="h-full px-3 pb-4 overflow-y-auto bg-white dark:bg-gray-800 scrollbar-hidden">
-            <ul class="space-y-2 font-medium">
+            <ul class="space-y-1 font-medium">
                 <li>
                     <a href="{% url 'home' %}" class="flex items-center p-3 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group transition-colors {% if request.resolver_match.url_name == 'home' %}bg-gray-100 dark:bg-gray-700{% endif %}">
                         <svg class="w-5 h-5 text-gray-500 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 21">
