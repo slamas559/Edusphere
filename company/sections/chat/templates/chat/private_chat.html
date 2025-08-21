@@ -6,7 +6,15 @@
     <!-- Chat Header -->
      <a href="{% url 'profile' receiver.profile.slug %}">
     <div class="flex items-center border-b py-2">
-        <img class="w-8 h-8 rounded-full" src="{{ receiver.profile.profile_picture.url }}">
+        
+        {% if not receiver.profile.profile_picture %}
+            <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                {{ receiver.username.0|upper }}
+            </div>
+        {% else %}
+            <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                src="{{ receiver.profile.profile_picture.url }}" alt="{{ receiver.username }} profile picture">
+        {% endif %}
         <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ receiver.username }}</h2>
     </div>
     </a>

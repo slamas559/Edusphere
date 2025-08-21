@@ -28,6 +28,7 @@ class GroupView(ListView):
             queryset = queryset.filter(Q(name__icontains=query)|Q(bio__icontains=query)).distinct()
         return queryset
 
+@login_required
 def about_group(request, slug):
     group = get_object_or_404(Group, slug=slug)
     # questions = Question.objects.filter(group=group).prefetch_related('options')

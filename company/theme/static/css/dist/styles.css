@@ -1667,48 +1667,12 @@ select {
   height: 100vh;
 }
 
-.h-\[\] {
-  height: ;
-}
-
-.h-\[400px\] {
-  height: 400px;
-}
-
 .max-h-64 {
   max-height: 16rem;
 }
 
 .max-h-\[500px\] {
   max-height: 500px;
-}
-
-.max-h-\[400px\] {
-  max-height: 400px;
-}
-
-.max-h-\[100px\] {
-  max-height: 100px;
-}
-
-.max-h-\[300px\] {
-  max-height: 300px;
-}
-
-.max-h-\[250px\] {
-  max-height: 250px;
-}
-
-.max-h-\[200px\] {
-  max-height: 200px;
-}
-
-.max-h-full {
-  max-height: 100%;
-}
-
-.max-h-\[50px\] {
-  max-height: 50px;
 }
 
 .w-10 {
@@ -3395,12 +3359,12 @@ select {
     flex-direction: row;
   }
 
-  .lg\:gap-4 {
-    gap: 1rem;
-  }
-
   .lg\:gap-3 {
     gap: 0.75rem;
+  }
+
+  .lg\:gap-4 {
+    gap: 1rem;
   }
 
   .lg\:px-2 {

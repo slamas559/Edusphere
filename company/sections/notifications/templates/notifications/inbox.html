@@ -25,9 +25,14 @@
                     <div class="flex items-start space-x-4">
                         <!-- Avatar -->
                         <div class="flex-shrink-0 relative">
-                            <img src="{{ notification.sender.profile.profile_picture.url }}" 
-                                 alt="{{ notification.sender.username }}"
-                                 class="h-12 w-12 rounded-full border-2 border-gray-300 dark:border-gray-600 object-cover">
+                            {% if not notification.sender.profile.profile_picture %}
+                                <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                    {{ notification.sender.username.0|upper }}
+                                </div>
+                            {% else %}
+                                <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                                 src="{{ notification.sender.profile.profile_picture.url }}" alt="{{ notification.sender.username }} profile picture">
+                            {% endif %}
                             <!-- Notification type icon -->
                             <div class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full p-1 shadow">
                                 {% if notification.notification_type == 'request' %}

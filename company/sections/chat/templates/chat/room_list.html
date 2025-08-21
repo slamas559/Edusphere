@@ -59,9 +59,15 @@
                     <div class="flex items-center space-x-4">
                         <!-- Group Avatar -->
                         <div class="relative flex-shrink-0">
-                            <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
-                                 src="{{ group.profile_picture.url }}" 
-                                 alt="{{ group.name }} group picture">
+                            
+                            {% if not group.profile.profile_picture %}
+                                <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                    {{ group.name.0|upper }}
+                                </div>
+                            {% else %}
+                                <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                                 src="{{ group.profile.profile_picture.url }}" alt="{{ group.name }} profile picture">
+                            {% endif %}
                             <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800 bg-green-500"></span>
                         </div>
                         

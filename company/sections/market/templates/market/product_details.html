@@ -70,7 +70,14 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
       <div class="flex items-center space-x-4">
         <a href="{% url 'profile' product.seller.profile.slug %}">
-          <img src="{{ product.seller.profile.profile_picture.url }}" alt="Profile Pic" class="w-12 h-12 rounded-full object-cover">
+          {% if not product.seller.profile.profile_picture %}
+              <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                  {{ product.seller.username.0|upper }}
+              </div>
+          {% else %}
+              <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                src="{{ product.seller.profile.profile_picture.url }}" alt="{{ product.seller.username }} profile picture">
+          {% endif %}
         </a>
         <div>
           <a href="{% url 'profile' product.seller.profile.slug %}" class="text-lg font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -107,7 +114,14 @@
       <div class="border-b border-gray-200 dark:border-gray-700 pb-6 last:border-0 last:pb-0">
         <div class="flex items-start space-x-4">
           <a href="{% url 'profile' review.buyer.profile.slug %}">
-            <img src="{{ review.buyer.profile.profile_picture.url }}" alt="Profile Pic" class="w-10 h-10 rounded-full object-cover">
+            {% if not review.buyer.profile.profile_picture %}
+              <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                  {{ review.buyer.username.0|upper }}
+              </div>
+            {% else %}
+                <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                  src="{{ review.buyer.profile.profile_picture.url }}" alt="{{ review.buyer.username }} profile picture">
+            {% endif %}
           </a>
           <div class="flex-1">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">

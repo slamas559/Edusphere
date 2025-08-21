@@ -5,7 +5,15 @@
 {% block content %}
 <div class="w-full h-full mx-auto p-2 bg-gray-100 dark:bg-gray-900 shadow-md rounded-lg flex flex-col overflow-hidden">
     <div class="flex items-center border-b py-2">
-        <img class="w-8 h-8 rounded-full" src="{{ room.profile_picture.url }}">
+        {% comment %} <img class="w-8 h-8 rounded-full" src="{{ room.profile_picture.url }}"> {% endcomment %}
+        {% if not room.profile.profile_picture %}
+            <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                {{ room.name.0|upper }}
+            </div>
+        {% else %}
+            <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                src="{{ room.profile.profile_picture.url }}" alt="{{ room.name }} profile picture">
+        {% endif %}
         <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ room.name }}</h2>
     </div>
     <div id="chat-messages" class="overflow-y-auto scrollbar-hidden p-3 bg-gray-100 dark:bg-gray-900 rounded-lg p-0" style="height:75vh;">
@@ -29,7 +37,15 @@
                                 </div>
                             {% else %}
                                 <div class="flex space-x-2 w-full">
-                                    <img class="w-8 h-8 rounded-full" src="{{ chat.sender.profile.profile_picture.url }}">
+                                    {% comment %} <img class="w-8 h-8 rounded-full" src="{{ chat.sender.profile.profile_picture.url }}"> {% endcomment %}
+                                    {% if not chat.sender.profile.profile_picture %}
+                                        <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                            {{ chat.sender.username.0|upper }}
+                                        </div>
+                                    {% else %}
+                                        <img class="h-8 w-8 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                                        src="{{ chat.sender.profile.profile_picture.url }}" alt="{{ chat.sender.username }} profile picture">
+                                    {% endif %}
                                     <div>
                                         <div class="px-2 py-1 rounded-lg {% if chat.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
                                             <strong class="text-gray-900">{{ chat.sender.username }}</strong> 

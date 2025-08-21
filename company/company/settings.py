@@ -31,7 +31,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_2)va(^c$!2_r)qjkuw0m!4k$o%q^8^%@6%w!cz17)^*x#l2fp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = False
 
 ALLOWED_HOSTS = ["edusphere-5dmb.onrender.com", "localhost", "127.0.0.1"]
 
@@ -229,3 +229,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "logout"
+
+LOGIN_URL = '/login'
