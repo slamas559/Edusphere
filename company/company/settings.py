@@ -16,6 +16,7 @@ import cloudinary
 import cloudinary.uploader
 import cloudinary.api
 import os
+import sys
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -31,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_2)va(^c$!2_r)qjkuw0m!4k$o%q^8^%@6%w!cz17)^*x#l2fp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["edusphere-5dmb.onrender.com", "localhost", "127.0.0.1"]
 
@@ -187,7 +188,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -196,7 +197,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-STATICFILES_DIRS = []
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "theme", "static", "theme"),
+]
 
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -204,8 +207,8 @@ STATICFILES_FINDERS = [
     "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
 ]
 
-COMPRESS_ENABLED = True
-COMPRESS_OFFLINE = True
+# COMPRESS_ENABLED = True
+# COMPRESS_OFFLINE = True
 
 MEDIA_URL = '/media/'
 
@@ -227,9 +230,12 @@ STORAGES = {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
   },
   'staticfiles': {
-    'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'  # this is the storage for static files
-  },
+        # 'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage' if not DEBUG 
+        #           else 'django.contrib.staticfiles.storage.StaticFilesStorage'
+        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
+    },
 }
+# STATICFILES_STORAGE = STORAGES['staticfiles']['BACKEND']
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
