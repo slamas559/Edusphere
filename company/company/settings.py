@@ -55,8 +55,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cloudinary',
     'compressor',
+    'cloudinary',
     "widget_tweaks",
     'sections.blog.apps.BlogConfig',
     'sections.dashboard.apps.DashboardConfig',
@@ -112,6 +112,12 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # COMPRESS_ENABLED = True
 
 # STATICFILES_FINDERS = ('compressor.finders.CompressorFinder',)
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
+]
+
 
 
 TEMPLATES = [
@@ -199,7 +205,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
             os.path.join(BASE_DIR, "theme/static/css/dist")
 ]
-
+COMPRESS_ENABLED = True
+COMPRESS_OFFLINE = True
 
 MEDIA_URL = '/media/'
 
