@@ -56,8 +56,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'compressor',
     'cloudinary',
+    'compressor',
     "widget_tweaks",
     'sections.blog.apps.BlogConfig',
     'sections.dashboard.apps.DashboardConfig',
@@ -199,13 +199,14 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "theme", "static", "theme"),
+    # os.path.join(BASE_DIR, "theme/static/css/dist")
 ]
 
-STATICFILES_FINDERS = [
-    "django.contrib.staticfiles.finders.FileSystemFinder",
-    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
-]
+# STATICFILES_FINDERS = [
+#     "django.contrib.staticfiles.finders.FileSystemFinder",
+#     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+#     "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
+# ]
 
 # COMPRESS_ENABLED = True
 # COMPRESS_OFFLINE = True
