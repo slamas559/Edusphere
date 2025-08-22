@@ -188,7 +188,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
@@ -198,15 +198,15 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
-    # os.path.join(BASE_DIR, "theme", "static"),
+    os.path.join(BASE_DIR, "theme", "static"),
     # os.path.join(BASE_DIR, "theme/static/css/dist/"),
 ]
 
-# STATICFILES_FINDERS = [
-#     "django.contrib.staticfiles.finders.FileSystemFinder",
-#     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-#     "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
-# ]
+STATICFILES_FINDERS = [
+    "django.contrib.staticfiles.finders.FileSystemFinder",
+    "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
+]
 
 # COMPRESS_ENABLED = True
 # COMPRESS_OFFLINE = True
@@ -229,15 +229,16 @@ STORAGES = {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
   },
   'staticfiles': {
-        'BACKEND': 'django.contrib.staticfiles.storage.StaticFilesStorage'
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     },
 }
 # STATICFILES_STORAGE = STORAGES['staticfiles']['BACKEND']
 STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
-theme_static_path = os.path.join(BASE_DIR, "theme", "static")
-if os.path.exists(theme_static_path) and os.listdir(theme_static_path):
-    STATICFILES_DIRS.append(('theme', theme_static_path))
+
+# print(os.path.exists(STATIC_ROOT))
+# print(os.listdir(STATIC_ROOT))
+
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

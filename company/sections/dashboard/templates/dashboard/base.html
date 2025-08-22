@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% comment %} {% load compress %} {% endcomment %}
 {% load static %}
 {% load widget_tweaks %}
 {% load tailwind_tags %}
@@ -15,7 +16,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     {% tailwind_preload_css %}
     {% comment %} {% compress css %} {% endcomment %}
-      {% tailwind_css %}
+      {% comment %} {% tailwind_css %} {% endcomment %}
+      <link rel="stylesheet" href="{% static 'css/dist/styles.css' %}">
     {% comment %} {% endcompress %} {% endcomment %}
     
     <style>
