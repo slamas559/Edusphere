@@ -198,7 +198,7 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "theme", "static"),
-    # os.path.join(BASE_DIR, "theme/static/css/dist/"),
+    # ('theme', os.path.join(BASE_DIR, "theme", "static")),
 ]
 
 STATICFILES_FINDERS = [
