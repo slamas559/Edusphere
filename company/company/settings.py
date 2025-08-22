@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_2)va(^c$!2_r)qjkuw0m!4k$o%q^8^%@6%w!cz17)^*x#l2fp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ["edusphere-5dmb.onrender.com", "localhost", "127.0.0.1"]
 
@@ -45,7 +45,6 @@ CSRF_TRUSTED_ORIGINS = ["https://edusphere-5dmb.onrender.com"]
 INSTALLED_APPS = [
     'channels',
     'daphne',
-    'jazzmin',
     'tailwind',
     'django_browser_reload',
     'theme',
@@ -229,7 +228,7 @@ STORAGES = {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
   },
   'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'
     },
 }
 # STATICFILES_STORAGE = STORAGES['staticfiles']['BACKEND']
