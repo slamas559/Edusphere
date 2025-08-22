@@ -43,13 +43,13 @@ CSRF_TRUSTED_ORIGINS = ["https://edusphere-5dmb.onrender.com"]
 
 # Application definition
 INSTALLED_APPS = [
+    'whitenoise.runserver_nostatic',
     'channels',
     'daphne',
     'tailwind',
     'django_browser_reload',
     'theme',
     'cloudinary_storage',
-    'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'cloudinary',
     'compressor',
     "widget_tweaks",
+    'django.contrib.admin',
     'sections.blog.apps.BlogConfig',
     'sections.dashboard.apps.DashboardConfig',
     'sections.chat.apps.ChatConfig',
@@ -66,6 +67,7 @@ INSTALLED_APPS = [
     'sections.archive.apps.ArchiveConfig',
     'sections.notifications.apps.NotificationsConfig',
     'users.apps.UsersConfig',
+
 ]
 
 MIDDLEWARE = [
@@ -194,11 +196,8 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "theme", "static"),
-    # ('theme', os.path.join(BASE_DIR, "theme", "static")),
 ]
 
 STATICFILES_FINDERS = [
@@ -222,17 +221,22 @@ CLOUDINARY_STORAGE = {
     'CLOUDINARY_API_SECRET': CLOUDINARY_API_SECRET
 }
 
+WHITENOISE_MANIFEST_STRICT = False
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 STORAGES = {
-  'default': {
+'default': {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
-  },
-  'staticfiles': {
+},
+'staticfiles': {
         'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     },
 }
 # STATICFILES_STORAGE = STORAGES['staticfiles']['BACKEND']
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.django.CompressedManifestStaticFilesStorage'
+
 
 
 # print(os.path.exists(STATIC_ROOT))
