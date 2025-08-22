@@ -170,10 +170,10 @@
         chatList.insertBefore(newItem, chatList.firstChild);
         
         // Play notification sound if unread
-        if (data.unread_count > 0) {
-            const audio = new Audio('{% static "sounds/notification.mp3" %}');
-            audio.play().catch(e => console.log('Audio play failed:', e));
-        }
+        // if (data.unread_count > 0) {
+         //   const audio = new Audio('{% static "sounds/notification.mp3" %}');
+         //   audio.play().catch(e => console.log('Audio play failed:', e));
+        // }
     };
 
     // Handle connection errors

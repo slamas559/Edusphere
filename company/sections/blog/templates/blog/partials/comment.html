@@ -5,9 +5,14 @@
   <div class="flex items-start gap-3 p-3 hover:bg-gray-50 dark:hover:bg-gray-800/50 rounded-lg transition-colors">
     <!-- Profile Picture -->
     <a href="{% url 'profile' comment.user.profile.slug %}" class="flex-shrink-0">
-      <img src="{{ comment.user.profile.profile_picture.url }}" 
-           alt="{{ comment.user.username }}'s profile picture"
-           class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-600">
+      {% if not comment.user.profile.profile_picture %}
+          <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+              {{ comment.user.username.0|upper }}
+          </div>
+      {% else %}
+          <img class="h-10 w-10 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+              src="{{ comment.user.profile.profile_picture.url }}" alt="{{ comment.user.username }} profile picture">
+      {% endif %}
     </a>
 
     <!-- Comment Content -->
