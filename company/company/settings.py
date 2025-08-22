@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_2)va(^c$!2_r)qjkuw0m!4k$o%q^8^%@6%w!cz17)^*x#l2fp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["edusphere-5dmb.onrender.com", "localhost", "127.0.0.1"]
 
@@ -204,7 +204,7 @@ STATICFILES_DIRS = [
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
-    "compressor.finders.CompressorFinder",  # 👈 required for django-compressor
+    "compressor.finders.CompressorFinder",
 ]
 
 # COMPRESS_ENABLED = True
@@ -228,7 +228,7 @@ STORAGES = {
     'BACKEND': 'cloudinary_storage.storage.MediaCloudinaryStorage' # or any media storage you'd like to use.
   },
   'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedStaticFilesStorage'
+        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage'
     },
 }
 # STATICFILES_STORAGE = STORAGES['staticfiles']['BACKEND']
