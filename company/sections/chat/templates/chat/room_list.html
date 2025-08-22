@@ -1,5 +1,5 @@
 {% extends "dashboard/base.html" %}
-{% load static %}
+
 {% block content %}
 <div class="max-w-4xl mx-auto px-2 sm:px-6 lg:px-8 ">
     <!-- Header with Tabs -->
@@ -151,9 +151,12 @@
             <a href="/chat/room/${data.slug}/" class="block px-6 py-4">
                 <div class="flex items-center space-x-4">
                     <div class="relative flex-shrink-0">
-                        <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
-                             src="${data.picture || '{% static "default-group.png" %}'}" 
-                             alt="${data.name} group picture">
+                        ${!data.picture ? `<div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                ${data.name.charAt(0).toUpperCase()}
+                            </div>`
+                        : `<img class="h-12 w-12 border-2 border-gray-200 dark:border-gray-600 rounded-full object-cover"
+                                src="${data.picture}" alt="${data.name} profile picture">
+                        `}
                         <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800 bg-green-500"></span>
                     </div>
                     <div class="flex-1 min-w-0">
@@ -180,11 +183,7 @@
         // Add to top of list
         groupList.insertBefore(newItem, groupList.firstChild);
         
-        // Play notification sound if unread
-        // if (data.unread_count > 0) {
-        //    const audio = new Audio('{% static "sounds/notification.mp3" %}');
-        //    audio.play().catch(e => console.log('Audio play failed:', e));
-        //}
+        
     };
 
     // Handle connection errors

@@ -1,5 +1,5 @@
 {% extends "dashboard/base.html" %}
-{% load static %}
+
 {% block content %}
 <div class="max-w-4xl mx-auto px-2 sm:px-4 lg:px-6">
     <!-- Header with Tabs -->
@@ -140,9 +140,13 @@
             <a href="/chat/private/${data.sender}/" class="block px-6 py-4">
                 <div class="flex items-center space-x-4">
                     <div class="relative flex-shrink-0">
-                        <img class="h-12 w-12 rounded-full object-cover border-2 border-gray-200 dark:border-gray-600" 
-                             src="${data.picture}" 
-                             alt="${data.sender} profile picture">
+                        ${!data.sender.picture ?
+                            `<div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                ${data.sender.charAt(0).toUpperCase()}
+                            </div>`
+                        : `<img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                                src="${data.sender.picture}" alt="${data.sender.username} profile picture">
+                        `}
                         <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white dark:ring-gray-800 
                                   ${data.is_online ? 'bg-green-500' : 'bg-gray-400'}"></span>
                     </div>
@@ -169,11 +173,7 @@
         // Add to top of list
         chatList.insertBefore(newItem, chatList.firstChild);
         
-        // Play notification sound if unread
-        // if (data.unread_count > 0) {
-         //   const audio = new Audio('{% static "sounds/notification.mp3" %}');
-         //   audio.play().catch(e => console.log('Audio play failed:', e));
-        // }
+        
     };
 
     // Handle connection errors
