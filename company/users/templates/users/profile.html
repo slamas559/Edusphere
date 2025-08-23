@@ -143,11 +143,14 @@
                     <!-- Author Profile -->
                     <a href="{% url 'profile' post.author.profile.slug %}" class="absolute top-3 left-3 z-10">
                         <div class="flex items-center space-x-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm border border-gray-200 dark:border-gray-600 transition-all duration-200 hover:bg-white dark:hover:bg-gray-800">
-                            <img 
-                                src="{{ post.author.profile.profile_picture.url }}" 
-                                alt="{{ post.author.username }}" 
-                                class="w-8 h-8 rounded-full border-2 border-white dark:border-gray-700"
-                            >
+                            {% if not post.author.profile.profile_picture %}
+                                <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                                    {{ post.author.username.0|upper }}
+                                </div>
+                            {% else %}
+                                <img class="h-8 w-8 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                                    src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.username }} profile picture">
+                            {% endif %}
                             <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ post.author.username }}</span>
                         </div>
                     </a>
@@ -228,11 +231,11 @@
   <section id="products" class="tab-content hidden">
     {% if products %}
       <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ owner.user.username }}'s Recent Listings</h2>
-      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 lg:gap-3 xl:gap-3">
         {% for product in products %}
         <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow duration-300">
           <div class="relative aspect-square overflow-hidden">
-            <img src="{{ product.image.url }}" alt="{{ product.title }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300">
+            <img src="{{ product.get_resized_image }}" alt="{{ product.title }}" class="w-full h-full max-h-64 object-cover hover:scale-105 transition-transform duration-300">
           </div>
           <div class="p-4">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ product.title }}</h3>

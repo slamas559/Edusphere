@@ -51,10 +51,10 @@
 
 <!-- JavaScript for WebSocket -->
 <script>
-    const chatSocket = new WebSocket( 
-        // 'ws://' + window.location.host + '/ws/private/{{ receiver.username }}/'
-        'wss://' + window.location.host + '/ws/private/{{ receiver.username }}/'
-
+    const chatSocket = new WebSocket(
+        (window.location.protocol === "https:" ? "wss://" : "ws://") + 
+        window.location.host + 
+        "/ws/private/{{ receiver.username }}/"
     );
 
     chatSocket.onmessage = function(event) {
@@ -87,13 +87,15 @@
     document.getElementById('chat-form').onsubmit = function(event) {
         event.preventDefault();
         const messageInput = document.getElementById('message-input');
-
-        chatSocket.send(JSON.stringify({
-            'message': messageInput.value,
-            'sender': "{{ request.user.username }}"
-        }));
-
-        messageInput.value = '';  // Clear input field
+        if (chatSocket.readyState === WebSocket.OPEN) {
+            chatSocket.send(JSON.stringify({
+                'message': messageInput.value,
+                'sender': "{{ request.user.username }}"
+            }));
+            messageInput.value = '';  // Clear input field
+        } else {
+            console.error("WebSocket not open. Current state:", chatSocket.readyState);
+        }
     };
 
     window.addEventListener("DOMContentLoaded", function () {

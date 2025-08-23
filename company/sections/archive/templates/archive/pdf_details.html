@@ -3,43 +3,155 @@
 {% load custom_filters %}
 
 {% block content %}
-<div class="max-w-5xl mx-auto px-2 sm:px-6 lg:px-8">
-  <div class="bg-white dark:bg-gray-900 shadow-xl rounded-2xl overflow-hidden">
-    
+<div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <!-- Main Card -->
+  <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700">
     <!-- Cover Image -->
-    {% if pdf.cover_image %}
-      <img src="{{ pdf.cover_image.url }}" alt="{{ pdf.title }}" class="w-full h-96 object-cover">
-    {% else %}
-      <div class="w-full h-96 bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-        <span class="text-gray-500 dark:text-gray-400">No Preview Available</span>
-      </div>
-    {% endif %}
+    <div class="relative">
+      {% if pdf.cover_image %}
+        <img src="{{ pdf.cover_image.url }}" alt="{{ pdf.title }}" class="w-full h-80 sm:h-96 object-cover">
+        <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+      {% else %}
+        <div class="w-full h-80 sm:h-96 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-700 dark:to-gray-800 flex items-center justify-center">
+          <div class="text-center">
+            <svg class="w-16 h-16 mx-auto text-gray-400 dark:text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            <span class="text-gray-500 dark:text-gray-400 text-lg">No Preview Available</span>
+          </div>
+        </div>
+      {% endif %}
+    </div>
 
-    <div class="p-6">
+    <!-- Content -->
+    <div class="p-6 sm:p-8">
       <!-- Title -->
-      <h1 class="text-3xl font-bold text-gray-800 dark:text-white mb-2">{{ pdf.title|default:pdf.file.name|replace:"/,"|replace:"pdfs,"|replace:"_,-"|replace:".pdf," }}</h1>
+      <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white mb-4 leading-tight">
+        {{ pdf.title|default:pdf.file.name|replace:"/,"|replace:"pdfs,"|replace:"_,"|replace:".pdf,"|replace:"media,"|replace:"medias,"|truncatechars:40 }}
+      </h1>
       
       <!-- Description -->
-      <p class="text-gray-600 dark:text-gray-300 mb-4">{{ pdf.description|default:"No description provided." }}</p>
-
-      <!-- Metadata -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400 mb-6">
-        <p><strong>Uploaded By:</strong> {{ pdf.uploaded_by.username }}</p>
-        <p><strong>Uploaded On:</strong> {{ pdf.uploaded_at|date:"F j, Y, g:i a" }}</p>
-        <p><strong>Author:</strong> {{ pdf.author }}</p>
-        <p><strong>Pages:</strong> {{ pdf.page_count }}</p>
+      <div class="mb-6">
+        <p class="text-lg text-gray-600 dark:text-gray-300 leading-relaxed">
+          {{ pdf.description|default:"No description provided." }}
+        </p>
       </div>
 
-      <!-- Download/View PDF -->
-      <div class="flex space-x-4">
-        <a href="{{ pdf.file.url }}" target="_blank" class="dark:text-white text-gray-600 px-5 py-2 hover:scale-105 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200">
-          📖 View PDF
+      <!-- Metadata Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <div class="space-y-4">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Uploaded By</p>
+              <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ pdf.uploaded_by.username }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Uploaded On</p>
+              <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ pdf.uploaded_at|date:"F j, Y" }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-purple-600 dark:text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Author</p>
+              <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ pdf.author|default:"Unknown" }}</p>
+            </div>
+          </div>
+
+          <div class="flex items-center">
+            <div class="flex-shrink-0 w-10 h-10 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center">
+              <svg class="w-5 h-5 text-orange-600 dark:text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+              </svg>
+            </div>
+            <div class="ml-4">
+              <p class="text-sm font-medium text-gray-500 dark:text-gray-400">Pages</p>
+              <p class="text-lg font-semibold text-gray-900 dark:text-white">{{ pdf.page_count|default:"0" }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <a href="{{ pdf.file.url }}" target="_blank" 
+           class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+          </svg>
+          View PDF
         </a>
-        <a href="{{ pdf.file.url }}" download class="dark:text-white text-gray-600 px-5 py-2 hover:scale-105 rounded hover:bg-green-700 rounded-full hover:bg-red-200 backdrop-blur-md bg-white/10 border-white/50 shadow-lg bg-opacity-50 transition duration-200">
-          ⬇ Download
+        
+        <a href="{{ pdf.file.url }}" download
+           class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium transition-colors duration-200 shadow-sm">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          Download PDF
         </a>
       </div>
     </div>
   </div>
+
+  <!-- Related PDFs Section -->
+  {% if related_pdfs %}
+  <div class="mt-12">
+    <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">Related Documents</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for related_pdf in related_pdfs %}
+      <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow duration-300">
+        {% if related_pdf.cover_image %}
+          <img src="{{ related_pdf.cover_image.url }}" alt="{{ related_pdf.title }}" class="w-full h-48 object-cover">
+        {% else %}
+          <div class="w-full h-48 bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
+            <svg class="w-12 h-12 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+        {% endif %}
+        <div class="p-4">
+          <h3 class="font-semibold text-gray-900 dark:text-white mb-2 line-clamp-2">
+            {{ related_pdf.title|default:related_pdf.file.name|truncatechars:50 }}
+          </h3>
+          <p class="text-sm text-gray-500 dark:text-gray-400 mb-3">By {{ related_pdf.author|default:"Unknown" }}</p>
+          <a href="{% url 'pdf-detail' related_pdf.pk %}" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 text-sm font-medium">
+            View Details →
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
 </div>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
 {% endblock %}

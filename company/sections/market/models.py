@@ -43,13 +43,14 @@ class Product(models.Model):
             self.slug = f"{self.id}-{slugify(self.title)}--{self.seller.username}"  # Example: 123456789012-my-title
         return super().save(*args, **kwargs)
 
-    def get_resized_image(self, width=400, height=400, crop="fill"):
+    def get_resized_image(self, width=450, height=450, crop="fill"):
         if not self.image:
             return None
         url, options = cloudinary_url(
             self.image.public_id,
             width=width,
             height=height,
+            gravity="faces",
             crop=crop
         )
         return url

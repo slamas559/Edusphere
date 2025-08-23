@@ -74,7 +74,9 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         from django.contrib.auth import get_user_model
         User = get_user_model()
         user = User.objects.get(username=username)
-        return user.profile.profile_picture.url
+        if user.profile.profile_picture and hasattr(user.profile.profile_picture, "url"):
+            return user.profile.profile_picture.url
+        return None
 
     async def chat_message(self, event):
         await self.send(text_data=json.dumps(event))
