@@ -64,8 +64,8 @@ LEVELS = [
 class Profile(models.Model):
     # Change from User to CustomUser
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    school = models.CharField(max_length=250, default="")
-    education_level = models.CharField(choices=LEVELS, default="", max_length=250)
+    school = models.CharField(max_length=250, blank=True, default="")
+    education_level = models.CharField(choices=LEVELS, blank=True, default="", max_length=250)
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(upload_to="profile_pics/", blank=True, null=True)
     cover_photo = models.ImageField(upload_to="cover_photos/", blank=True, null=True)

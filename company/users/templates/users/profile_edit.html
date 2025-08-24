@@ -2,100 +2,197 @@
 {% load widget_tweaks %}
 
 {% block content %}
-<div class="max-w-2xl mx-auto bg-white dark:bg-gray-900 p-3 rounded-lg shadow-lg">
-    <h2 class="text-2xl font-bold text-gray-800 dark:text-white text-center mb-6">Edit Profile</h2>
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="text-center mb-8">
+        <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Edit Profile</h2>
+        <p class="text-gray-600 dark:text-gray-400">Update your personal information and preferences</p>
+    </div>
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-4">
-        {% csrf_token %}
+    <!-- Form Container -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 sm:p-8">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
 
-        <!-- Profile Picture Upload -->
-        <div class="flex items-center space-x-4">
-            {% if not user.profile.profile_picture %}
-              <div class="h-20 w-20 text-xl rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                  {{ user.first_name.0|upper }}
-              </div>
-            {% else %}
-                <img class="h-20 w-20 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                    src="{{ user.profile.profile_picture.url }}" alt="{{ user.first_name }} profile picture">
-            {% endif %}
-            <div class="flex flex-col">
-                <label class="text-sm font-medium dark:text-gray-400 text-gray-700">Change Profile Picture</label>
-                <input type="file" name="profile_picture" class="mt-1 text-sm text-gray-500">
+            <!-- Profile Images Section -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6 border-b border-gray-200 dark:border-gray-700">
+                <!-- Profile Picture -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Profile Picture</h3>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="relative">
+                            {% if not user.profile.profile_picture %}
+                            <div class="w-32 h-32 text-4xl rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium shadow-lg">
+                                {{ user.first_name.0|upper }}{{ user.last_name.0|upper }}
+                            </div>
+                            {% else %}
+                            <img class="w-32 h-32 rounded-full object-cover border-4 border-white dark:border-gray-800 shadow-lg"
+                                src="{{ user.profile.profile_picture.url }}" alt="{{ user.first_name }} profile picture">
+                            {% endif %}
+                            <div class="absolute -bottom-2 -right-2 bg-white dark:bg-gray-700 rounded-full p-1 shadow-md">
+                                <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <label class="cursor-pointer">
+                            <span class="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 极速0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Change Photo
+                            </span>
+                            <input type="file" name="profile_picture" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Cover Photo -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Cover Photo</h3>
+                    <div class="flex flex-col items-center space-y-4">
+                        <div class="relative w-full h-32 rounded-lg overflow-hidden bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600">
+                            {% if user.profile.cover_photo %}
+                            <img class="w-full h-full object-cover" src="{{ user.profile.cover_photo.url }}" alt="Cover photo">
+                            {% endif %}
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2极速V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <label class="cursor-pointer">
+                            <span class="inline-flex items-center px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium rounded-lg transition-colors duration-200">
+                                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                                </svg>
+                                Change Cover
+                            </span>
+                            <input type="file" name="cover_photo" class="hidden" accept="image/*">
+                        </label>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="flex items-center space-x-4">
-            {% if not user.profile.cover_photo %}
-              <div class="h-20 w-20 text-xl rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                  {{ user.first_name.0|upper }}
-              </div>
-            {% else %}
-                <img class="h-20 w-20 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                    src="{{ user.profile.cover_photo.url }}" alt="{{ user.first_name }} cover picture">
-            {% endif %}
-            <div class="flex flex-col">
-                <label class="text-sm font-medium dark:text-gray-400 text-gray-700">Change Cover Picture</label>
-                <input type="file" name="cover_photo" class="mt-1 text-sm text-gray-500">
+            <!-- Personal Information -->
+            <div class="space-y-6">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Personal Information</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Username -->
+                    <div>
+                        <label for="{{ u_form.username.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Username *
+                        </label>
+                        {{ u_form.username|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200" }}
+                        {% if u_form.username.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ u_form.username.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="{{ u_form.email.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Email Address *
+                        </label>
+                        {{ u_form.email|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200" }}
+                        {% if u_form.email.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ u_form.email.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- First Name -->
+                    <div>
+                        <label for="{{ u_form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            First Name
+                        </label>
+                        {{ u_form.first_name|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200" }}
+                        {% if u_form.first_name.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ u_form.first_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <!-- Last Name -->
+                    <div>
+                        <label for="{{ u_form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Last Name
+                        </label>
+                        {{ u_form.last_name|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200" }}
+                        {% if u_form.last_name.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ u_form.last_name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Bio -->
+                <div>
+                    <label for="{{ p_form.bio.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Bio
+                    </label>
+                    {{ p_form.bio|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200 resize-vertical min-h-24"|attr:"placeholder:Tell us about yourself..."|attr:"rows:3" }}
+                    {% if p_form.bio.errors %}
+                    <p class="text-red-500 text-sm mt-1">{{ p_form.bio.errors.0 }}</p>
+                    {% endif %}
+                </div>
             </div>
-        </div>
 
-        <!-- Username Field -->
-        <div>
-            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700">Username</label>
-            {{ u_form.username|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-        </div>
+            <!-- Education Information -->
+            <div class="space-y-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Education</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- School -->
+                    <div>
+                        <label for="{{ p_form.school.id_for_label }}" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            School/Institution
+                        </label>
+                        {{ p_form.school|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200"|attr:"placeholder:Your school or university" }}
+                        {% if p_form.school.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ p_form.school.errors.0 }}</p>
+                        {% endif %}
+                    </div>
 
-        <!-- Email Field -->
-        <div>
-            <label for="{{ form.username.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700">Email</label>
-            {{ u_form.email|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-        </div>
+                    <!-- Education Level -->
+                    <div>
+                        <label for="{{ p_form.education_level.id_for_label }}" class="block text-sm font-medium text极速-gray-700 dark:text-gray-300 mb-2">
+                            Education Level
+                        </label>
+                        {{ p_form.education_level|add_class:"w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-white transition-colors duration-200" }}
+                        {% if p_form.education_level.errors %}
+                        <p class="text-red-500 text-sm mt-1">{{ p_form.education_level.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
 
-        <div class="mb-4">
-            <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">First Name</label>
-            {{ u_form.first_name|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-            {% if form.first_name.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.first_name.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div class="mb-4">
-            <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">Last Name</label>
-            {{ u_form.last_name|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-            {% if form.last_name.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.last_name.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div class="mb-4">
-            <label for="{{ form.school.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">School</label>
-            {{ p_form.school|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-            {% if form.school.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.school.errors }}</p>
-            {% endif %}
-        </div>
-
-        <div class="mb-4">
-            <label for="{{ form.educationlevel.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700 mb-1">School Level</label>
-            {{ p_form.education_level|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-            {% if form.educationlevel.errors %}
-                <p class="text-red-500 text-xs mt-1">{{ form.educationlevel.errors }}</p>
-            {% endif %}
-        </div>
-
-        <!-- Bio Field -->
-        <div>
-            <label for="{{ form.bio.id_for_label }}" class="block text-sm font-medium dark:text-gray-400 text-gray-700">Bio</label>
-            {{ p_form.bio|add_class:"w-full p-2 border dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400" }}
-        </div>
-
-        <!-- Save Button -->
-        <div class="text-center">
-            <button type="submit"
-                    class="bg-blue-500 text-white py-2 px-6 rounded-lg hover:bg-blue-600 focus:ring-2 focus:ring-blue-400">
-                Save Changes
-            </button>
-        </div>
-    </form>
+            <!-- Action Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <button type="submit" class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-medium rounded-lg transition-all duration-200 shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Save Changes
+                </button>
+                <a href="{% url 'profile' user.profile.slug %}" class="flex-1 inline-flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
 </div>
+
+<style>
+    .resize-vertical {
+        resize: vertical;
+    }
+    input:focus, textarea:focus, select:focus {
+        outline: none;
+        ring: 2px;
+    }
+</style>
 {% endblock %}

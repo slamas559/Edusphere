@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from .models import Product, Review, Category
 from django.db.models import Q
 from .forms import ProductForm, ReviewForm, Filter
@@ -99,7 +100,7 @@ class ProductDetailView(DetailView, CreateView):
         return super().form_valid(form)
 
 # Create a new product (only logged-in users)
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     form_class = ProductForm  # Use a form for validation
     template_name = "market/product_form.html"
@@ -109,7 +110,7 @@ class ProductCreateView(CreateView):
         return super().form_valid(form)
 
 # Update a product (only seller can update)
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = "market/product_form.html"

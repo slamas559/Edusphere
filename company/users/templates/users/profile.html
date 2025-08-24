@@ -152,13 +152,13 @@
                         <div class="flex items-center space-x-2 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-sm border border-gray-200 dark:border-gray-600 transition-all duration-200 hover:bg-white dark:hover:bg-gray-800">
                             {% if not post.author.profile.profile_picture %}
                                 <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                                    {{ post.author.username.0|upper }}
+                                    {{ post.author.first_name.0|upper }}
                                 </div>
                             {% else %}
                                 <img class="h-8 w-8 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                                    src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.username }} profile picture">
+                                    src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.first_name }} profile picture">
                             {% endif %}
-                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ post.author.username }}</span>
+                            <span class="text-sm font-medium text-gray-800 dark:text-gray-200">{{ post.author.first_name }}</span>
                         </div>
                     </a>
                 </div>

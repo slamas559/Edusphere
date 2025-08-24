@@ -63,5 +63,5 @@ class Comment(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        send_notification(self.post.author, self.user, f"{self.user} commented on your post '{self.post.title}'", "comment")
+        send_notification(self.post.author, self.user, f"{self.user.first_name} commented on your post '{self.post.title}'", "comment")
 

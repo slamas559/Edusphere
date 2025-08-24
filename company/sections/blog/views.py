@@ -111,6 +111,6 @@ def toggle_like(request, slug):
         liked = False
     else:
         post.likes.add(request.user)
-        send_notification(post.author, request.user, f"{request.user} likes your post '{post.title}'", "like")
+        send_notification(post.author, request.user, f"{request.user.first_name} likes your post '{post.title}'", "like")
         liked = True
     return JsonResponse({'liked': liked, 'like_count': post.total_likes()})

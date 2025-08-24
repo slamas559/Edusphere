@@ -38,7 +38,7 @@ def about_group(request, slug):
     # questions = Question.objects.filter(group=group).prefetch_related('options')
     questions = group.questions.prefetch_related('options').all()
     members = group.members.all()
-    posts = group.posts.all()
+    posts = group.posts.all().order_by('-date_posted')
 
     answered_question_ids = MemberAnswer.objects.filter(
         user=request.user, question__in=questions
@@ -49,7 +49,7 @@ def about_group(request, slug):
         User.objects
         .filter(id__in=members.values_list('id', flat=True))
         .annotate(score=Count('membersanswer', filter=Q(membersanswer__correct=True)))
-        .order_by('-score', 'username')  # Highest scores first
+        .order_by('-score', 'first_name')  # Highest scores first
     )
 
     context = {
@@ -138,18 +138,18 @@ def group_join(request, slug):
 
     messages.info(request, "You request as been sent ✈ you will be notified shortly")
     for admin in admins:
-        send_notification(admin, user, f"{user.username} requested to join {group.name}", "request", group)
-    
+        send_notification(admin, user, f"{user.first_name} requested to join {group.name}", "request", group)
+
     return redirect('group-detail', slug)  # Redirect to the previous page
 
 def accept_request(request, user, slug):
     sender = get_object_or_404(User, username=user)
     group = get_object_or_404(Group, slug=slug)
     if sender not in group.members.all():
-        messages.info(request, f"{sender} is now a member of {group.name}")
+        messages.info(request, f"{sender.first_name} is now a member of {group.name}")
         group.members.add(sender)
     else:
-        messages.info(request, f"{sender} is already a member!")
+        messages.info(request, f"{sender.first_name} is already a member!")
 
     return redirect('notification-inbox')
 

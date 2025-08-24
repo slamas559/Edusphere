@@ -4,6 +4,8 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.db.models import Count, Q
 from .forms import PDFUploadForm
 from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+
 
 # Use this to get the user model
 User = get_user_model()
@@ -21,6 +23,7 @@ class PDFListView(ListView):
             queryset = queryset.filter(Q(title__icontains=query)|Q(uploaded_by__username__icontains=query)).distinct()
         return queryset
 
+@login_required
 def pdf_upload(request):
     if request.method == 'POST':
         form = PDFUploadForm(request.POST, request.FILES)

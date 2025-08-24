@@ -4,8 +4,12 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.template.defaultfilters import slugify
 from PIL import Image
+from django.db.models.signals import post_save
 from django.urls import reverse
 import random
+from django.dispatch import receiver
+from sections.notifications.views import send_notification
+
 
 
 # Create your models here.
@@ -22,10 +26,8 @@ class Group(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.id = random.randint(100000000000, 999999999999)  # 12-digit random number
-        # if not self.slug:
         self.slug = f"{slugify(self.name)}-{self.id}"  # Example: 123456789012-my-title
-        self.admin.add(self.creator)
-        self.members.add(self.creator)
+        
         return super().save(*args, **kwargs)
 
     def __str__(self):
@@ -81,9 +83,9 @@ class Comment(models.Model):
     def is_parent(self):
         return self.parent is None
 
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #     send_notification(self.post.author, self.user, f"{self.user} commented on your post '{self.post.title}'", "comment")
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        send_notification(self.post.author, self.user, f"{self.user.first_name} commented on your post '{self.post.title}'", "comment")
 
 class Question(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="questions")
