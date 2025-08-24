@@ -125,7 +125,7 @@
   <!-- Blog Posts Section -->
   <section id="posts" class="tab-content">
     {% if posts %}
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ owner.user.username }}'s Recent Blog Posts</h2>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ owner.user.first_name }}'s Recent Blog Posts</h2>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {% for post in posts %}
         <a href="{% url 'blog-detail' post.slug %}" class="group">
@@ -221,7 +221,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
         </svg>
-        <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mt-3">{{ owner.user.username }} hasn't posted any blogs yet</h3>
+        <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mt-3">{{ owner.user.first_name }} hasn't posted any blogs yet</h3>
         {% if owner.user == user %}
           <a href="{% url 'post-create' %}" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -237,26 +237,32 @@
   <!-- Marketplace Listings Section -->
   <section id="products" class="tab-content hidden">
     {% if products %}
-      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ owner.user.username }}'s Recent Listings</h2>
+      <h2 class="text-2xl font-bold text-gray-900 dark:text-white mb-6">{{ owner.user.first_name }}'s Recent Listings</h2>
       <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-3 lg:gap-3 xl:gap-3">
         {% for product in products %}
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-md overflow-hidden border border-gray-200 dark:border-gray-700 hover:shadow-lg transition-shadow duration-300">
+        <div class="group relative bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400">
           <div class="relative aspect-square overflow-hidden">
-            <img src="{{ product.get_resized_image }}" alt="{{ product.title }}" class="w-full h-full max-h-64 object-cover hover:scale-105 transition-transform duration-300">
+            <img src="{{ product.get_resized_image }}" alt="{{ product.title }}" class="w-full h-full max-h-64 object-cover transition-transform duration-300 group-hover:scale-105">
+            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-3">
+              <span class="text-white font-medium">${{ product.price }}</span>
+            </div>
           </div>
-          <div class="p-4">
-            <h3 class="text-lg font-bold text-gray-900 dark:text-white mb-1">{{ product.title }}</h3>
-            <p class="text-blue-600 dark:text-blue-400 font-medium mb-2">${{ product.price }}</p>
-            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mb-4">
+          
+          <div class="p-3">
+            <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-1 line-clamp-2">{{ product.title }}</h2>
+            <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-2">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
               {{ product.location }}
             </div>
-            <a href="{% url 'product-detail' product.id %}" class="inline-flex items-center justify-center w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors">
-              View Details
-            </a>
+            
+            <div class="mt-4">
+              <a href="{% url 'product-detail' product.id %}" class="inline-flex items-center justify-center w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm transition-colors duration-200">
+                View Details
+              </a>
+            </div>
           </div>
         </div>
         {% endfor %}
@@ -266,7 +272,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 dark:text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         </svg>
-        <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mt-3">{{ owner.user.username }} hasn't listed any products yet</h3>
+        <h3 class="text-lg font-medium text-gray-600 dark:text-gray-400 mt-3">{{ owner.user.first_name }} hasn't listed any products yet</h3>
         {% if owner.user == user %}
           <a href="{% url 'product-create' %}" class="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
