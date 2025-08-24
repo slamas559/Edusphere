@@ -8,7 +8,7 @@ from sections.market.models import Product
 from .forms import CustomUserCreationForm, UserUpdateForm, ProfileUpdateForm, CustomAuthenticationForm
 from django.contrib.auth import views as auth_views
 from django.urls import reverse_lazy
-from django.contrib.auth import login
+from django.contrib.auth import login, authenticate
 
 class LoginView(auth_views.LoginView):
     form_class = CustomAuthenticationForm
@@ -23,7 +23,19 @@ def register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            login(request, user)
+            
+            # FIX: Authenticate the user before logging in to handle multiple backends
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            authenticated_user = authenticate(request, username=username, password=password)
+            
+            if authenticated_user:
+                login(request, authenticated_user)
+            else:
+                # Fallback: Set backend manually if authentication fails
+                user.backend = 'django.contrib.auth.backends.ModelBackend'
+                login(request, user)
+            
             messages.success(request, f"✔ Your account has been created! Welcome to EduSphere.")
             return redirect("home")
         else:
@@ -35,7 +47,6 @@ def register(request):
     else:
         form = CustomUserCreationForm()
     return render(request, "users/register.html", {"form": form})
-
 
 @login_required
 def profile(request, slug):
