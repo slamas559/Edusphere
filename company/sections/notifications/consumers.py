@@ -1,10 +1,6 @@
 # notifications/consumers.py
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
-from django.contrib.auth import get_user_model
-
-# Use this to get the user model
-User = get_user_model()
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):

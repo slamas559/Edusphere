@@ -1,10 +1,6 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
-from django.contrib.auth import get_user_model
-
-# Use this to get the user model
-User = get_user_model()
 
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
