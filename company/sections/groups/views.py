@@ -11,6 +11,10 @@ from sections.notifications.views import send_notification
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count, Q
 from .forms import GroupPostForm, CommentForm
+from django.contrib.auth import get_user_model
+
+# Use this to get the user model
+User = get_user_model()
 
 # Create your views here.
 

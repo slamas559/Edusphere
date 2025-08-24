@@ -27,11 +27,11 @@
                         <div class="flex-shrink-0 relative">
                             {% if not notification.sender.profile.profile_picture %}
                                 <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                                    {{ notification.sender.username.0|upper }}
+                                    {{ notification.sender.first_name.0|upper }}
                                 </div>
                             {% else %}
                                 <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                                 src="{{ notification.sender.profile.profile_picture.url }}" alt="{{ notification.sender.username }} profile picture">
+                                 src="{{ notification.sender.profile.profile_picture.url }}" alt="{{ notification.sender.first_name }} profile picture">
                             {% endif %}
                             <!-- Notification type icon -->
                             <div class="absolute -bottom-1 -right-1 bg-white dark:bg-gray-800 rounded-full p-1 shadow">
@@ -67,7 +67,7 @@
                             <!-- Action buttons for request type -->
                             {% if notification.notification_type == 'request' %}
                             <div class="mt-3 flex space-x-2" style="margin-top: -0.5rem; margin-left: -0.8rem;">
-                                <a href="{% url 'group-accept' notification.sender.username notification.group.slug %}"
+                                <a href="{% url 'group-accept' notification.sender.first_name notification.group.slug %}"
                                    class="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                                     Accept
                                 </a>

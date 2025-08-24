@@ -40,15 +40,15 @@
                                     {% comment %} <img class="w-8 h-8 rounded-full" src="{{ chat.sender.profile.profile_picture.url }}"> {% endcomment %}
                                     {% if not chat.sender.profile.profile_picture %}
                                         <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                                            {{ chat.sender.username.0|upper }}
+                                            {{ chat.sender.first_name.0|upper }}
                                         </div>
                                     {% else %}
                                         <img class="h-8 w-8 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                                        src="{{ chat.sender.profile.profile_picture.url }}" alt="{{ chat.sender.username }} profile picture">
+                                        src="{{ chat.sender.profile.profile_picture.url }}" alt="{{ chat.sender.first_name }} profile picture">
                                     {% endif %}
                                     <div>
                                         <div class="px-2 py-1 rounded-lg {% if chat.sender == request.user %} bg-blue-500 text-white {% else %} bg-gray-300 text-black {% endif %}">
-                                            <strong class="text-gray-900">{{ chat.sender.username }}</strong> 
+                                            <strong class="text-gray-900">{{ chat.sender.first_name }}</strong> 
                                             <p class="text-gray-900" style="font-size:14px;">{{ chat.content }}</p>
                                         </div>
                                         <div>
@@ -103,27 +103,38 @@
         // console.log(roomMember);
 
         if ( roomMember.includes(user) ) {
-            if (data.sender === "{{ request.user.username }}") {
+            if (data.sender === "{{ request.user.first_name }}") {
                 messageDiv.classList.add('text-right');
                 messageDiv.innerHTML += `
-                <div class="inline-block px-4 py-2 rounded-lg text-left ${data.sender === "{{ request.user.username }}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
-                    <p style="font-size:14px;">${data.message}
-                        <span style="font-size:10px;" class="text-gray-800 mt-1">${data.timestamp}</span>
-                    </p>
+                <div class="inline-block px-4 py-2 rounded-lg text-left ${data.sender === "{{ request.user.first_name }}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
+                    <p style="font-size:14px;">${data.message}</p>
+                </div>
+                <div>
+                    <p class="text-[10px] text-gray-600 dark:text-gray-300">${data.timestamp}</p>
                 </div>
             `;
             }else{
                 messageDiv.innerHTML += `
                 <div class="inline-block">
                 <div class="flex space-x-2 w-full">
-                    <img class="w-8 h-8 rounded-full" src="${data.picture}">
-                    <div class="px-2 py-1 rounded-lg ${data.sender === "{{request.user.username}}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
-                        <strong>${data.sender}</strong> 
-                        <p style="font-size:14px;">${data.message}
-                            <span style="font-size:10px;" class="text-gray-500 mt-1">
+                    ${!data.picture ?
+                        `<div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                            ${data.sender.charAt(0).toUpperCase()}
+                        </div>`
+                    : `<img class="h-8 w-8 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                            src="${data.picture}" alt="${data.username} profile picture">
+                    `}
+                    <div>
+                        <div class="px-2 py-1 rounded-lg ${data.sender === "{{request.user.first_name}}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
+                            <strong>${data.sender}</strong> 
+                            <p style="font-size:14px;">${data.message}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] text-gray-600 dark:text-gray-300">
                                 ${data.timestamp}
-                            </span>
-                        </p>
+                            </p>
+                        </div>
+                    </div>
                     </div>
                 </div>
             `;
@@ -141,7 +152,7 @@
         if (chatSocket.readyState === WebSocket.OPEN) {
             chatSocket.send(JSON.stringify({
                 'message': messageInput.value,
-                'sender': "{{ request.user.username }}"
+                'sender': "{{ request.user.first_name }}"
             }));
             messageInput.value = '';  // Clear input field
         } else {

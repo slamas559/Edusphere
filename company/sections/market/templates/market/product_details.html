@@ -50,7 +50,7 @@
                 Add to Cart
               </button>
               {% if product.seller != user %}
-              <a href="{% url 'private-chat' product.seller.username %}" class="flex-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+              <a href="{% url 'private-chat' product.seller.first_name %}" class="flex-1 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-6 py-3 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
@@ -72,16 +72,16 @@
         <a href="{% url 'profile' product.seller.profile.slug %}">
           {% if not product.seller.profile.profile_picture %}
               <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                  {{ product.seller.username.0|upper }}
+                  {{ product.seller.first_name.0|upper }}
               </div>
           {% else %}
               <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                src="{{ product.seller.profile.profile_picture.url }}" alt="{{ product.seller.username }} profile picture">
+                src="{{ product.seller.profile.profile_picture.url }}" alt="{{ product.seller.first_name }} profile picture">
           {% endif %}
         </a>
         <div>
           <a href="{% url 'profile' product.seller.profile.slug %}" class="text-lg font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            {{ product.seller.username }}
+            {{ product.seller.first_name }}
           </a>
           <p class="text-gray-500 dark:text-gray-400 text-sm">Member since {{ product.seller.date_joined|date:"F Y" }}</p>
         </div>
@@ -116,17 +116,17 @@
           <a href="{% url 'profile' review.buyer.profile.slug %}">
             {% if not review.buyer.profile.profile_picture %}
               <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                  {{ review.buyer.username.0|upper }}
+                  {{ review.buyer.first_name.0|upper }}
               </div>
             {% else %}
                 <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                  src="{{ review.buyer.profile.profile_picture.url }}" alt="{{ review.buyer.username }} profile picture">
+                  src="{{ review.buyer.profile.profile_picture.url }}" alt="{{ review.buyer.first_name }} profile picture">
             {% endif %}
           </a>
           <div class="flex-1">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between">
               <a href="{% url 'profile' review.buyer.profile.slug %}" class="text-lg font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                {{ review.buyer.username }}
+                {{ review.buyer.first_name }}
               </a>
               <div class="flex items-center mt-1 sm:mt-0">
                 {% for i in "12345" %}

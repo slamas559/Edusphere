@@ -5,8 +5,11 @@ from asgiref.sync import async_to_sync
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 import json
-
 from channels.layers import get_channel_layer
+from django.contrib.auth import get_user_model
+
+# Use this to get the user model
+User = get_user_model()
 
 
 # Create your views here.
@@ -36,7 +39,7 @@ def send_notification(user, sender, message, notification_type, group=None):
         f'notifications_{user.id}',
         {
             'type': 'send.notification',
-            'sender': notif.sender.username,
+            'sender': notif.sender.first_name,
             'receiver': user.id,
             'message': notif.message,
             'notify_type': notif.notification_type,

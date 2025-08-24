@@ -3,14 +3,14 @@
     <li class="flex space-x-3 shadow p-3 rounded-lg">
         {% if not member.profile.profile_picture %}
             <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                {{ member.username.0|upper }}
+                {{ member.first_name.0|upper }}
             </div>
         {% else %}
             <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                src="{{ member.profile.profile_picture.url }}" alt="{{ member.username }} profile picture">
+                src="{{ member.profile.profile_picture.url }}" alt="{{ member.first_name }} profile picture">
         {% endif %}
         <div>
-            <p class="text-gray-800 font-medium dark:text-gray-300">{{ member.username }}</p>
+            <p class="text-gray-800 font-medium dark:text-gray-300">{{ member.first_name }}</p>
             <p class="text-sm text-gray-500 dark:text-gray-400">Joined {{ member.date_joined|date:"M d, Y" }}</p>
         </div>
         {% if member in group.admin.all %}

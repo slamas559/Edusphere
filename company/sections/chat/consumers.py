@@ -1,6 +1,10 @@
 import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
+from django.contrib.auth import get_user_model
+
+# Use this to get the user model
+User = get_user_model()
 
 
 class PrivateChatConsumer(AsyncWebsocketConsumer):
@@ -11,8 +15,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         self.user = self.scope["user"]
         self.receiver_username = self.scope["url_route"]["kwargs"]["receiver_username"]
 
-        self.room_group_name = f"private_chat_{min(self.user.username, self.receiver_username)}_{max(self.user.username, self.receiver_username)}"
-        self.chat_list_group = f"chat_list_{self.scope['user'].username}"
+        self.room_group_name = f"private_chat_{min(self.user.first_name, self.receiver_username)}_{max(self.user.first_name, self.receiver_username)}"
+        self.chat_list_group = f"chat_list_{self.scope['user'].first_name}"
 
         await self.channel_layer.group_add(self.chat_list_group, self.channel_name)
         await self.channel_layer.group_add(self.room_group_name, self.channel_name)
@@ -29,7 +33,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         data = json.loads(text_data)
         sender = self.user
         receiver = await sync_to_async(User.objects.get)(username=self.receiver_username)
-        picture = await self.get_profile_picture_url(sender.username)
+        picture = await self.get_profile_picture_url(sender.first_name)
         total_count = await self.get_all_read_count(receiver)
         count = await self.get_read(receiver)
 
@@ -44,8 +48,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             {
                 "type": "chat_message",
                 "message": data["message"],
-                "sender": sender.username,
-                "timestamp": message.timestamp.strftime("%H:%M %p"),
+                "sender": sender.first_name,
+                "timestamp": message.timestamp.strftime("%h:%M %p"),
                 "unread_count": count,
             },
         )
@@ -54,8 +58,8 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             "chat_list",
             {
                 "type": "chat_list.update",
-                "sender": sender.username,
-                "receiver": receiver.username,
+                "sender": sender.first_name,
+                "receiver": receiver.first_name,
                 "message": data["message"],
                 "timestamp": message.timestamp.strftime('%H:%M %p'),
                 "unread_count": count,
@@ -110,7 +114,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room = await self.get_group(self.room_name)
         new_message = await self.save_message(user, room, message)
         picture = await self.get_group_picture_url(self.room_name)
-        user_picture = await self.get_profile_picture_url(user.username)
+        user_picture = await self.get_profile_picture_url(user.first_name)
         total_count = await self.get_all_read_count(user)
 
         await self.channel_layer.group_send(
@@ -159,7 +163,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         from django.contrib.auth import get_user_model
         User = get_user_model()
         user = User.objects.get(username=username)
-        return user.profile.profile_picture.url
+        if user.profile.profile_picture and hasattr(user.profile.profile_picture, "url"):
+            return user.profile.profile_picture.url
+        return None
 
     @sync_to_async
     def get_group(self, room_name):
@@ -176,7 +182,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
     def save_message(self, user, room, content):
         from .models import GroupMessage
         message = GroupMessage.objects.create(sender=user, room=room, content=content)
-        return {"sender": user.username, "content": message.content, "room": message.room, "timestamp": str(message.timestamp.strftime("%H:%M, %b %d"))}
+        return {"sender": user.first_name, "content": message.content, "room": message.room, "timestamp": str(message.timestamp.strftime("%H:%M"))}
 
 
 class ChatListConsumer(AsyncWebsocketConsumer):

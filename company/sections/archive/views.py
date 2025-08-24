@@ -3,6 +3,10 @@ from .models import PDFResource
 from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.db.models import Count, Q
 from .forms import PDFUploadForm
+from django.contrib.auth import get_user_model
+
+# Use this to get the user model
+User = get_user_model()
 
 class PDFListView(ListView):
     model = PDFResource

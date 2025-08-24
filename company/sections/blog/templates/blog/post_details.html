@@ -21,16 +21,16 @@
           <a href="{% url 'profile' post.author.profile.slug %}">
             {% if not post.author.profile.profile_picture %}
                 <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                    {{ post.author.username.0|upper }}
+                    {{ post.author.first_name.0|upper }}
                 </div>
             {% else %}
                 <img class="h-10 w-10 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                    src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.username }} profile picture">
+                    src="{{ post.author.profile.profile_picture.url }}" alt="{{ post.author.first_name }} profile picture">
             {% endif %}
           </a>
           <div>
             <a href="{% url 'profile' post.author.profile.slug %}" class="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-              {{ post.author.username }}
+              {{ post.author.first_name }}
             </a>
             <p class="text-sm text-gray-500 dark:text-gray-400">{{ post.date_posted|date:"F d, Y" }}</p>
           </div>
@@ -128,7 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const commentList = document.querySelector(".space-y-6");
 
     const postId = "{{ post.id }}";
-    const userName = "{{ user.username }}";
+    const userName = "{{ user.first_name }}";
 
     // Inline reply handler
     commentList.addEventListener("click", (e) => {

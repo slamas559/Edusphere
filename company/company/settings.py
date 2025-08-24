@@ -32,7 +32,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-_2)va(^c$!2_r)qjkuw0m!4k$o%q^8^%@6%w!cz17)^*x#l2fp'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ["edusphere-5dmb.onrender.com", "localhost", "127.0.0.1"]
 
@@ -46,14 +46,14 @@ INSTALLED_APPS = [
     'whitenoise.runserver_nostatic',
     'channels',
     'daphne',
-    'tailwind',
-    'django_browser_reload',
-    'theme',
     'cloudinary_storage',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'theme',
+    'tailwind',
+    'django_browser_reload',
     'django.contrib.staticfiles',
     'cloudinary',
     'compressor',
@@ -82,6 +82,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+# Add to your settings.py
+AUTH_USER_MODEL = 'users.CustomUser'
+
+# Authentication backends
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'users.backends.EmailBackend',  # We'll create this next
+]
 TAILWIND_APP_NAME = 'theme'
 
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
@@ -198,6 +206,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "theme", "static"),
+    os.path.join(BASE_DIR, "static", "img"),
 ]
 
 STATICFILES_FINDERS = [

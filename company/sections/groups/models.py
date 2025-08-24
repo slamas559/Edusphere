@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.template.defaultfilters import slugify
@@ -10,9 +11,9 @@ import random
 # Create your models here.
 class Group(models.Model):
     name = models.CharField(max_length=255)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_by')
-    members = models.ManyToManyField(User, related_name='members', blank=True)
-    admin = models.ManyToManyField(User, related_name='admin', blank=True)
+    creator = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='created_by')
+    members = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='members', blank=True)
+    admin = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='admin', blank=True)
     date_created = models.DateTimeField(default=timezone.now)
     bio = models.TextField(blank=True, null=True)
     profile_picture = models.ImageField(default="default.jpg", upload_to="group_pics/", blank=True, null=True)
@@ -39,10 +40,10 @@ class Post(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="posts")
     content = models.TextField()
     date_posted = models.DateTimeField(default=timezone.now)
-    author =  models.ForeignKey(User, on_delete=models.CASCADE, related_name="authors_group")
+    author =  models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="authors_group")
     image = models.ImageField(upload_to="group_images/", blank=True, null=True)
     slug = models.SlugField(default="", null=False, unique=True)
-    likes = models.ManyToManyField(User, related_name='liked_group_post', blank=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='liked_group_post', blank=True)
 
     def total_likes(self):
         return self.likes.count()
@@ -66,7 +67,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey('Post', on_delete=models.CASCADE, related_name='group_comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="commenter")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="commenter")
     content = models.TextField()
     parent = models.ForeignKey('self', null=True, blank=True, related_name='group_replies', on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now)
@@ -87,7 +88,7 @@ class Comment(models.Model):
 class Question(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name="questions")
     text = models.TextField()
-    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -102,7 +103,7 @@ class AnswerOption(models.Model):
         return f"{self.text} ({'Correct' if self.is_correct else 'Wrong'})"
 
 class MemberAnswer(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="membersanswer")
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="membersanswer")
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     selected_option = models.ForeignKey(AnswerOption, on_delete=models.CASCADE)
     correct = models.BooleanField(default=False)
@@ -115,7 +116,7 @@ class MemberAnswer(models.Model):
         return self.selected_option.is_correct
 
 class MemberScore(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     points = models.IntegerField(default=0)
 
@@ -124,4 +125,4 @@ class MemberScore(models.Model):
         ordering = ['-points']
 
     def __str__(self):
-        return f"{self.user.username} - {self.points} pts"
+        return f"{self.user.first_name} - {self.points} pts"

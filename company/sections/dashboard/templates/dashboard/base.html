@@ -25,6 +25,82 @@
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        
+        /* Custom dropdown styles */
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            margin-top: 0.5rem;
+            width: 12rem;
+            border-radius: 0.375rem;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            z-index: 50;
+        }
+        
+        .dark .dropdown-content {
+            background-color: #374151;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.12);
+        }
+        
+        .dropdown-content a {
+            display: block;
+            padding: 0.5rem 1rem;
+            font-size: 0.875rem;
+            color: #374151;
+        }
+        
+        .dark .dropdown-content a {
+            color: #D1D5DB;
+        }
+        
+        .dropdown-content a:hover {
+            background-color: #F3F4F6;
+        }
+        
+        .dark .dropdown-content a:hover {
+            background-color: #4B5563;
+        }
+        
+        /* Sidebar animation */
+        .sidebar {
+            transform: translateX(-100%);
+            transition: transform 300ms ease-in-out;
+        }
+        
+        .sidebar-open {
+            transform: translateX(0);
+        }
+        
+        /* Toast animation */
+        .toast-enter {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+        
+        .toast-enter-active {
+            transform: translateX(0);
+            opacity: 1;
+            transition: all 300ms ease-out;
+        }
+        
+        .toast-exit {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast-exit-active {
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 300ms ease-in;
+        }
+        
+        @media (min-width: 640px) {
+            .sidebar {
+                transform: translateX(0);
+            }
+        }
     </style>
 </head>
 <body class="h-full bg-gray-50 dark:bg-gray-900 antialiased">
@@ -34,15 +110,14 @@
             <div class="flex items-center justify-between h-16">
                 <!-- Mobile menu button and logo -->
                 <div class="flex items-center">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar" type="button" class="inline-flex items-center p-2 text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+                    <button id="sidebar-toggle" type="button" class="inline-flex items-center p-2 text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
                         <span class="sr-only">Open sidebar</span>
                         <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                             <path clip-rule="evenodd" fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z"></path>
                         </svg>
                     </button>
                     <a href="{% url 'home' %}" class="flex items-center ml-2 md:mr-8">
-                        {% comment %} <img src="{% static 'logo.svg' %}" class="h-8 w-auto" alt="EduSphere Logo"> {% endcomment %}
-                        <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 me-3" alt="FlowBite Logo" />
+                        <img src="https://flowbite.com/docs/images/logo.svg" class="h-8 me-3" alt="EduSphere Logo" />
                         <span class=" text-xs font-bold text-gray-900 dark:text-white sm:block">EduSphere</span>
                     </a>
                 </div>
@@ -59,7 +134,7 @@
                     <a href="{% url 'notification-inbox' %}" class="relative px-3 py-2 text-sm font-medium rounded-md transition-colors {% if request.resolver_match.url_name == 'notification-inbox' %}text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30{% else %}text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700{% endif %}">
                         Inbox
                         {% if notification_count > 0 %}
-                        <span class="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full w-5 h-5">
+                        <span id="notification-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center text-[10px] font-bold text-white bg-red-500 rounded-full w-5 h-5">
                             {{ notification_count }}
                         </span>
                         {% endif %}
@@ -79,11 +154,11 @@
                     
                     <div class="relative ml-3">
                         <div>
-                            <button type="button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" id="user-menu-button" aria-expanded="false" aria-haspopup="true" data-dropdown-toggle="user-dropdown">
+                            <button type="button" id="user-menu-button" class="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800" aria-expanded="false" aria-haspopup="true">
                                 <span class="sr-only">Open user menu</span>
                                 {% if not user.profile.profile_picture %}
                                     <div class="h-8 w-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                                        {{ user.username.0|upper }}
+                                        {{ user.first_name.0|upper }}
                                     </div>
                                 {% else %}
                                     <img class="h-8 w-8 rounded-full object-cover" src="{{ user.profile.profile_picture.url }}" alt="{{ user.username }} profile picture">
@@ -92,7 +167,7 @@
                         </div>
                         
                         <!-- Dropdown menu -->
-                        <div class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-gray-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none hidden" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1" id="user-dropdown">
+                        <div id="user-dropdown" class="dropdown-content" role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button" tabindex="-1">
                             <a href="{% url 'profile' request.user.profile.slug %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Your Profile</a>
                             <a href="{% url 'logout' %}" class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700" role="menuitem" tabindex="-1">Sign out</a>
                         </div>
@@ -113,7 +188,7 @@
     </nav>
 
     <!-- Sidebar -->
-    <aside id="logo-sidebar" class="fixed top-0 left-0 z-30 w-64 h-screen pt-20 transition-transform -translate-x-full bg-white border-r border-gray-200 sm:translate-x-0 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
+    <aside id="logo-sidebar" class="sidebar fixed top-0 left-0 z-30 w-64 h-screen pt-20 bg-white border-r border-gray-200 dark:bg-gray-800 dark:border-gray-700" aria-label="Sidebar">
         <div class="h-full px-3 text-sm pb-4 overflow-y-auto bg-white dark:bg-gray-800 scrollbar-hidden">
             <ul class="space-y-1 font-medium">
                 <li>
@@ -230,24 +305,24 @@
                 <div class="flex items-center p-4 text-sm rounded-lg shadow-lg transition-all duration-300 transform translate-x-0 opacity-100 {% if message.tags == 'success' %}bg-green-50 text-green-800 dark:bg-green-900/30 dark:text-green-300{% elif message.tags == 'error' %}bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-300{% elif message.tags == 'info' %}bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300{% else %}bg-gray-50 text-gray-800 dark:bg-gray-700 dark:text-gray-300{% endif %}" role="alert">
                     {% if message.tags == 'success' %}
                     <svg class="flex-shrink-0 inline w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                        <path d="M10 .5a9.5 9.5 极速0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 极速0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4极速h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                     {% elif message.tags == 'error' %}
                     <svg class="flex-shrink-0 inline w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 极速1 0 2Z"/>
                     </svg>
                     {% elif message.tags == 'info' %}
                     <svg class="flex-shrink-0 inline w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                        <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2极速h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                     </svg>
                     {% endif %}
                     <span class="sr-only">{{ message.tags|capfirst }}</span>
                     <div>
                         <span class="font-medium">{{ message }}</span>
                     </div>
-                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 {% if message.tags == 'success' %}bg-green-100 text-green-500 hover:bg-green-200 dark:bg-green-800/30 dark:text-green-400 dark:hover:bg-green-800/40{% elif message.tags == 'error' %}bg-red-100 text-red-500 hover:bg-red-200 dark:bg-red-800/30 dark:text-red-400 dark:hover:bg-red-800/40{% elif message.tags == 'info' %}bg-blue-100 text-blue-500 hover:bg-blue-200 dark:bg-blue-800/30 dark:text-blue-400 dark:hover:bg-blue-800/40{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600{% endif %}" data-dismiss-target="#flash-messages" aria-label="Close">
+                    <button type="button" class="ml-auto -mx-1.5 -my-1.5 rounded-lg p-1.5 inline-flex items-center justify-center h-8 w-8 {% if message.tags == 'success' %}bg-green-100 text-green-500 hover:bg-green-200 dark:bg-green-800/30 dark:text-green-400 dark:hover:bg-green-800/40{% elif message.tags == 'error' %}bg-red-100 text-red-500 hover:bg-red-200 dark:bg-red-800/30 dark:text-red-400 dark:hover:bg-red-800/40{% elif message.tags == 'info' %}bg-blue-100 text-blue-500 hover:bg-blue-200 dark:bg-blue-800/30 dark:text-blue-400 dark:hover:极速bg-blue-800/40{% else %}bg-gray-100 text-gray-500 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600{% endif %}" data-dismiss-target="#flash-messages" aria-label="Close">
                         <span class="sr-only">Close</span>
-                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="极速0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
                     </button>
@@ -262,35 +337,71 @@
     </main>
 
     <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    
     <script>
-        // Scroll behavior for navigation bar
-        let lastScrollTop = 0;
-        const navbar = document.getElementById('main-nav');
-        const navbarHeight = navbar.offsetHeight;
-        
-        // Set body padding to match navbar height
-        document.body.style.paddingTop = `${navbarHeight}px`;
-        
-        window.addEventListener('scroll', function() {
-            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        // DOM ready event
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle sidebar on mobile
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+            const sidebar = document.getElementById('logo-sidebar');
             
-            if (scrollTop > lastScrollTop && scrollTop > navbarHeight) {
-                // Scrolling down
-                // navbar.classList.remove('translate-y-full');
-                navbar.classList.add("translate-y-[-100px]");
-                // console.log(`translate-y-[-${navbarHeight}px]`);
-            } else {
-                // Scrolling up or at top
-                navbar.classList.remove("translate-y-[-100px]");
-                // navbar.classList.add('translate-y-full');
-                // console.log("Navbar visible");
+            if (sidebarToggle && sidebar) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('sidebar-open');
+                });
             }
             
-            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
-        }, false);
-
+            // Toggle user dropdown
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            
+            if (userMenuButton && userDropdown) {
+                userMenuButton.addEventListener('click', function() {
+                    userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(event) {
+                    if (!userMenuButton.contains(event.target) && !userDropdown.contains(event.target)) {
+                        userDropdown.style.display = 'none';
+                    }
+                });
+            }
+            
+            // Close flash messages
+            const flashMessages = document.getElementById('flash-messages');
+            if (flashMessages) {
+                const closeButtons = flashMessages.querySelectorAll('[data-dismiss-target]');
+                closeButtons.forEach(button => {
+                    button.addEventListener('click', function() {
+                        const alert = this.closest('[role="alert"]');
+                        alert.classList.add('translate-x-full', 'opacity-0');
+                        setTimeout(() => alert.remove(), 300);
+                    });
+                });
+            }
+            
+            // Scroll behavior for navigation bar
+            let lastScrollTop = 0;
+            const navbar = document.getElementById('main-nav');
+            const navbarHeight = navbar.offsetHeight;
+            
+            // Set body padding to match navbar height
+            document.body.style.paddingTop = `${navbarHeight}px`;
+            
+            window.addEventListener('scroll', function() {
+                let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > lastScrollTop && scrollTop > navbarHeight) {
+                    // Scrolling down
+                    navbar.classList.add("translate-y-[-100px]");
+                } else {
+                    // Scrolling up or at top
+                    navbar.classList.remove("translate-y-[-100px]");
+                }
+                
+                lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            }, false);
+        });
         
         // Notification WebSocket
         const notifSocket = new WebSocket(
@@ -341,7 +452,7 @@
             toast.setAttribute('role', 'alert');
             
             toast.innerHTML = `
-                <svg class="flex-shrink-0 inline w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <svg class="flex-shrink-0 inline w-4 h-4 mr-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="current极速Color" viewBox="0 0 20 20">
                     <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
                 </svg>
                 <span class="sr-only">${type}</span>

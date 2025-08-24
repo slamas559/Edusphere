@@ -3,7 +3,10 @@ from django.template.loader import render_to_string
 from django.utils import timezone
 from asgiref.sync import sync_to_async
 import json
+from django.contrib.auth import get_user_model
 
+# Use this to get the user model
+User = get_user_model()
 
 class CommentConsumer(AsyncWebsocketConsumer):
     async def connect(self):

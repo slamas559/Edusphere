@@ -10,11 +10,32 @@
 
         <!-- Profile Picture Upload -->
         <div class="flex items-center space-x-4">
-            <img src="{{ user.profile.profile_picture.url }}" alt="Profile Picture"
-                 class="w-20 h-20 rounded-full border-2 border-gray-300 shadow-md">
+            {% if not user.profile.profile_picture %}
+              <div class="h-20 w-20 text-xl rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                  {{ user.first_name.0|upper }}
+              </div>
+            {% else %}
+                <img class="h-20 w-20 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                    src="{{ user.profile.profile_picture.url }}" alt="{{ user.first_name }} profile picture">
+            {% endif %}
             <div class="flex flex-col">
                 <label class="text-sm font-medium dark:text-gray-400 text-gray-700">Change Profile Picture</label>
                 <input type="file" name="profile_picture" class="mt-1 text-sm text-gray-500">
+            </div>
+        </div>
+
+        <div class="flex items-center space-x-4">
+            {% if not user.profile.cover_photo %}
+              <div class="h-20 w-20 text-xl rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
+                  {{ user.first_name.0|upper }}
+              </div>
+            {% else %}
+                <img class="h-20 w-20 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
+                    src="{{ user.profile.cover_photo.url }}" alt="{{ user.first_name }} cover picture">
+            {% endif %}
+            <div class="flex flex-col">
+                <label class="text-sm font-medium dark:text-gray-400 text-gray-700">Change Cover Picture</label>
+                <input type="file" name="cover_photo" class="mt-1 text-sm text-gray-500">
             </div>
         </div>
 

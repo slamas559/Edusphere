@@ -9,13 +9,13 @@
         
         {% if not receiver.profile.profile_picture %}
             <div class="h-12 w-12 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-                {{ receiver.username.0|upper }}
+                {{ receiver.first_name.0|upper }}
             </div>
         {% else %}
             <img class="h-12 w-12 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-                src="{{ receiver.profile.profile_picture.url }}" alt="{{ receiver.username }} profile picture">
+                src="{{ receiver.profile.profile_picture.url }}" alt="{{ receiver.first_name }} profile picture">
         {% endif %}
-        <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ receiver.username }}</h2>
+        <h2 class="text-lg font-semibold dark:text-gray-300 ml-3">{{ receiver.first_name }}</h2>
     </div>
     </a>
 
@@ -54,7 +54,7 @@
     const chatSocket = new WebSocket(
         (window.location.protocol === "https:" ? "wss://" : "ws://") + 
         window.location.host + 
-        "/ws/private/{{ receiver.username }}/"
+        "/ws/private/{{ receiver.first_name }}/"
     );
 
     chatSocket.onmessage = function(event) {
@@ -68,14 +68,14 @@
         const messageDiv = document.createElement('div');
         messageDiv.classList.add('mb-2');
 
-        if (data.sender === "{{ request.user.username }}") {
+        if (data.sender === "{{ request.user.first_name }}") {
             messageDiv.classList.add('text-right');
         }
 
         messageDiv.innerHTML = `
-            <p style="font-size:14px;" class="inline-block text-left px-4 py-2 rounded-lg ${data.sender === "{{ request.user.username }}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
+            <p style="font-size:14px;" class="inline-block text-left px-4 py-2 rounded-lg ${data.sender === "{{ request.user.first_name }}" ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}">
                 ${data.message}
-                <span style="font-size:10px;" class="${data.sender === "{{ request.user.username }}"? 'text-gray-800': 'text-gray-500'} mt-1">${data.timestamp}</span>
+                <span style="font-size:10px;" class="${data.sender === "{{ request.user.first_name }}"? 'text-gray-800': 'text-gray-500'} mt-1">${data.timestamp}</span>
             </p>
             
         `;
@@ -90,7 +90,7 @@
         if (chatSocket.readyState === WebSocket.OPEN) {
             chatSocket.send(JSON.stringify({
                 'message': messageInput.value,
-                'sender': "{{ request.user.username }}"
+                'sender': "{{ request.user.first_name }}"
             }));
             messageInput.value = '';  // Clear input field
         } else {

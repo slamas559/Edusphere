@@ -1,6 +1,9 @@
 from django.shortcuts import render
 import requests
+from django.contrib.auth import get_user_model
 
+# Use this to get the user model
+User = get_user_model()
 # Create your views here.
 
 def home(request):

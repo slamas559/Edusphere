@@ -4,6 +4,10 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from .models import Product, Review, Category
 from django.db.models import Q
 from .forms import ProductForm, ReviewForm, Filter
+from django.contrib.auth import get_user_model
+
+# Use this to get the user model
+User = get_user_model()
 
 # List all products
 class ProductListView(ListView):

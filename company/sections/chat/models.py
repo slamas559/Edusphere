@@ -1,10 +1,11 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from sections.groups.models import Group
 
 class Message(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sent_messages")
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name="received_messages", null=True, blank=True)
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="sent_messages")
+    receiver = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="received_messages", null=True, blank=True)
     content = models.TextField()
     read = models.BooleanField(default=False)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -18,10 +19,10 @@ class Message(models.Model):
         return f"Group: {self.sender.username}: {self.content[:20]}"
 
 class GroupMessage(models.Model):
-    sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name="group_messages")
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="group_messages")
     room = models.ForeignKey(Group, on_delete=models.CASCADE, default="")
     content = models.TextField()
-    read_by = models.ManyToManyField(User, related_name="group_messages_read", blank=True)
+    read_by = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="group_messages_read", blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     class Meta:

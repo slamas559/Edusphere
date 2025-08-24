@@ -13,7 +13,7 @@
             {% for user in rankings %}
                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-700 transition">
                     <td class="p-2">{% if forloop.counter == 1 or forloop.counter == 2 or forloop.counter == 3 %} 🏆 {% else %} {{ forloop.counter }} {% endif %}</td>
-                    <td class="p-2 dark:text-gray-300">{{ user.username }}</td>
+                    <td class="p-2 dark:text-gray-300">{{ user.first_name }}</td>
                     <td class="p-2 font-semibold dark:text-gray-300">{{ user.score }} 🍪</td>
                 </tr>
             {% empty %}

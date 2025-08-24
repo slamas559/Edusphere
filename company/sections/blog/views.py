@@ -4,7 +4,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponseRedirect
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.views.decorators.http import require_POST
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -20,6 +20,10 @@ from .models import Post, Comment
 from .forms import CommentForm
 from django.utils.text import slugify
 from sections.notifications.views import send_notification
+from django.contrib.auth import get_user_model
+
+# Use this to get the user model
+User = get_user_model()
 
 # Create your views here.
 

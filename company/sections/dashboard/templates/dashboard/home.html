@@ -7,8 +7,8 @@
   <div class="mb-2">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
       <div>
-        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ request.user.username }}</span>!</h1>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">{{ quote }} <span class="text-gray-500 dark:text-gray-400">— {{ author }}</span></p>
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Welcome back, <span class="text-blue-600 dark:text-blue-400">{{ request.user.first_name }}</span>!</h1>
+        {% comment %} <p class="text-gray-600 dark:text-gray-300 mt-2">{{ quote }} <span class="text-gray-500 dark:text-gray-400">— {{ author }}</span></p> {% endcomment %}
       </div>
       <div class="flex items-center gap-2">
         <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400">
@@ -151,7 +151,7 @@
         <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8 w-8 rounded-full" src="{% static 'images/default.jpg' %}" alt="User profile">
+              <img class="h-8 w-8 rounded-full" src="{% static 'default.jpg' %}" alt="User profile">
             </div>
             <div class="ml-3">
               <p class="text-sm font-medium text-gray-900 dark:text-white">
@@ -166,7 +166,7 @@
         <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8 w-8 rounded-full" src="{% static 'images/default.jpg' %}" alt="User profile">
+              <img class="h-8 w-8 rounded-full" src="{% static 'default.jpg' %}" alt="User profile">
             </div>
             <div class="ml-3">
               <p class="text-sm font-medium text-gray-900 dark:text-white">
@@ -181,7 +181,7 @@
         <div class="p-4 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
           <div class="flex items-center">
             <div class="flex-shrink-0">
-              <img class="h-8 w-8 rounded-full" src="{% static 'images/default.jpg' %}" alt="User profile">
+              <img class="h-8 w-8 rounded-full" src="{% static 'default.jpg' %}" alt="User profile">
             </div>
             <div class="ml-3">
               <p class="text-sm font-medium text-gray-900 dark:text-white">

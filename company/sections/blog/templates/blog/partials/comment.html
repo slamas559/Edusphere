@@ -7,11 +7,11 @@
     <a href="{% url 'profile' comment.user.profile.slug %}" class="flex-shrink-0">
       {% if not comment.user.profile.profile_picture %}
           <div class="h-10 w-10 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium">
-              {{ comment.user.username.0|upper }}
+              {{ comment.user.first_name.0|upper }}
           </div>
       {% else %}
           <img class="h-10 w-10 border-2 border-gray-300 dark:border-gray-600 rounded-full object-cover"
-              src="{{ comment.user.profile.profile_picture.url }}" alt="{{ comment.user.username }} profile picture">
+              src="{{ comment.user.profile.profile_picture.url }}" alt="{{ comment.user.first_name }} profile picture">
       {% endif %}
     </a>
 
@@ -21,7 +21,7 @@
         <!-- Username -->
         <a href="{% url 'profile' comment.user.profile.slug %}" 
            class="font-medium text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate">
-          {{ comment.user.username }}
+          {{ comment.user.first_name }}
         </a>
         
         <!-- Timestamp -->
@@ -44,7 +44,7 @@
         <!-- Reply Button -->
         <button class="reply-btn text-xs font-medium text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
                 data-id="{{ comment.id }}" 
-                user-name="{{ comment.user.username }}">
+                user-name="{{ comment.user.first_name }}">
           Reply
         </button>
 

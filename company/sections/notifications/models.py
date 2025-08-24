@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from sections.groups.models import Group
 
@@ -21,8 +22,8 @@ class Notification(models.Model):
         ('comment', 'Comment'),
     ]
 
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
-    sender = models.ForeignKey(User, default="", on_delete=models.CASCADE, related_name='sent_notifications')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    sender = models.ForeignKey(settings.AUTH_USER_MODEL, default="", on_delete=models.CASCADE, related_name='sent_notifications')
     message = models.TextField()
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='groups', blank=True, null=True, default="")
     notification_type = models.CharField(max_length=20, choices=NOTIFICATION_TYPES, default='alert')
@@ -30,4 +31,4 @@ class Notification(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user.username} - {self.notification_type}"
+        return f"{self.user.first_name} - {self.notification_type}"
