@@ -88,9 +88,9 @@ def chat_list(request):
 
 
 @login_required
-def private_chat(request, username):
+def private_chat(request, id):
     """View for private chat between two users."""
-    receiver = get_object_or_404(User, username=username)
+    receiver = get_object_or_404(User, pk=id)
     # receiver = User.objects.get(username=username)
     messages = Message.objects.filter(sender=request.user, receiver=receiver) | \
                Message.objects.filter(sender=receiver, receiver=request.user)

@@ -5,5 +5,5 @@ urlpatterns = [
     path("room/<slug:slug>/", chat_room, name="chat-room"),
     path("chatlist/", chat_list, name="chat-list"),
     path("grouplist/", group_list, name="group-list"),
-    path("private/<str:username>/", private_chat, name="private-chat"),
+    path("private/<int:id>/", private_chat, name="private-chat"),
 ]
