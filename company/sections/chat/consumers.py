@@ -3,15 +3,20 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 from asgiref.sync import sync_to_async
 
 
+import json
+from channels.generic.websocket import AsyncWebsocketConsumer
+from asgiref.sync import sync_to_async
+
+
 class PrivateChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        from django.contrib.auth import get_user_model  # Lazy import
+        from django.contrib.auth import get_user_model
         User = get_user_model()
 
         self.user = self.scope["user"]
-        self.receiver_username = self.scope["url_route"]["kwargs"]["receiver_username"]
+        self.receiver_slug = self.scope["url_route"]["kwargs"]["receiver_slug"]
 
-        self.room_group_name = f"private_chat_{min(self.user.first_name, self.receiver_username)}_{max(self.user.first_name, self.receiver_username)}"
+        self.room_group_name = f"private_chat_{min(self.user.first_name, self.receiver_slug)}_{max(self.user.first_name, self.receiver_slug)}"
         self.chat_list_group = f"chat_list_{self.scope['user'].first_name}"
 
         await self.channel_layer.group_add(self.chat_list_group, self.channel_name)
@@ -20,6 +25,7 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         await self.channel_layer.group_discard(self.chat_list_group, self.channel_name)
+        await self.channel_layer.group_discard(self.room_group_name, self.channel_name)
 
     async def receive(self, text_data):
         from django.contrib.auth import get_user_model
@@ -28,10 +34,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
 
         data = json.loads(text_data)
         sender = self.user
-        receiver = await sync_to_async(User.objects.get)(username=self.receiver_username)
-        picture = await self.get_profile_picture_url(sender.first_name)
-        total_count = await self.get_all_read_count(receiver)
-        count = await self.get_read(receiver)
+        receiver = await sync_to_async(User.objects.get)(profile__slug=self.receiver_slug)
+        sender_picture = await self.get_profile_picture_url(sender.email)
+        receiver_picture = await self.get_profile_picture_url(receiver.email)
+        
+        sender_total_count = await self.get_all_read_count(sender)
+        receiver_total_count = await self.get_all_read_count(receiver)
+        receiver_private_count = await self.get_read(receiver)
 
         message = await sync_to_async(Message.objects.create)(
             sender=sender,
@@ -39,28 +48,45 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
             content=data["message"]
         )
 
+        # Send message to chat room
         await self.channel_layer.group_send(
             self.room_group_name,
             {
                 "type": "chat_message",
                 "message": data["message"],
                 "sender": sender.first_name,
-                "timestamp": message.timestamp.strftime("%h:%M %p"),
-                "unread_count": count,
+                "timestamp": message.timestamp.strftime("%I:%M %p"),
+                "unread_count": receiver_private_count,
             },
         )
 
+        # Update sender's chat list
         await self.channel_layer.group_send(
-            "chat_list",
+            f"chat_list_{sender.first_name}",
             {
                 "type": "chat_list.update",
                 "sender": sender.first_name,
                 "receiver": receiver.first_name,
                 "message": data["message"],
-                "timestamp": message.timestamp.strftime('%H:%M %p'),
-                "unread_count": count,
-                "picture": picture,
-                "chat_count": total_count,
+                "timestamp": message.timestamp.strftime('%I:%M %p'),
+                "unread_count": 0,
+                "picture": receiver_picture,
+                "chat_count": sender_total_count,
+            }
+        )
+
+        # Update receiver's chat list
+        await self.channel_layer.group_send(
+            f"chat_list_{receiver.first_name}",
+            {
+                "type": "chat_message",
+                "sender": sender.first_name,
+                "receiver": receiver.first_name,
+                "message": data["message"],
+                "timestamp": message.timestamp.strftime('%I:%M %p'),
+                "unread_count": receiver_private_count,
+                "picture": sender_picture,
+                "chat_count": receiver_total_count,
             }
         )
 
@@ -70,16 +96,13 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         return Message.objects.filter(receiver=receiver, read=False).count()
 
     @sync_to_async
-    def get_profile_picture_url(self, username):
+    def get_profile_picture_url(self, email):
         from django.contrib.auth import get_user_model
         User = get_user_model()
-        user = User.objects.get(username=username)
+        user = User.objects.get(email=email)
         if user.profile.profile_picture and hasattr(user.profile.profile_picture, "url"):
             return user.profile.profile_picture.url
         return None
-
-    async def chat_message(self, event):
-        await self.send(text_data=json.dumps(event))
 
     @sync_to_async
     def get_all_read_count(self, user):
@@ -88,6 +111,11 @@ class PrivateChatConsumer(AsyncWebsocketConsumer):
         group_count = GroupMessage.objects.all().exclude(read_by=user).count()
         return private_count + group_count
 
+    async def chat_message(self, event):
+        await self.send(text_data=json.dumps(event))
+
+    async def chat_list_update(self, event):
+        await self.send(text_data=json.dumps(event))
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -110,7 +138,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         room = await self.get_group(self.room_name)
         new_message = await self.save_message(user, room, message)
         picture = await self.get_group_picture_url(self.room_name)
-        user_picture = await self.get_profile_picture_url(user.first_name)
+        user_picture = await self.get_profile_picture_url(user.email)
         total_count = await self.get_all_read_count(user)
 
         await self.channel_layer.group_send(
@@ -155,10 +183,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
         return private_count + group_count
 
     @sync_to_async
-    def get_profile_picture_url(self, username):
+    def get_profile_picture_url(self, email):
         from django.contrib.auth import get_user_model
         User = get_user_model()
-        user = User.objects.get(username=username)
+        user = User.objects.get(email=email)
         if user.profile.profile_picture and hasattr(user.profile.profile_picture, "url"):
             return user.profile.profile_picture.url
         return None

@@ -142,8 +142,8 @@ def group_join(request, slug):
 
     return redirect('group-detail', slug)  # Redirect to the previous page
 
-def accept_request(request, user, slug):
-    sender = get_object_or_404(User, username=user)
+def accept_request(request, user_slug, slug):
+    sender = get_object_or_404(User, profile__slug=user_slug)
     group = get_object_or_404(Group, slug=slug)
     if sender not in group.members.all():
         messages.info(request, f"{sender.first_name} is now a member of {group.name}")

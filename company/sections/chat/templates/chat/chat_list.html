@@ -45,7 +45,7 @@
         <ul class="divide-y divide-gray-200 dark:divide-gray-700">
             {% for user, details in chat_users %}
             <li class="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors" data-username="{{ user.username }}">
-                <a href="{% url 'private-chat' user.username %}" class="block px-6 py-4">
+                <a href="{% url 'private-chat' user.profile.slug %}" class="block px-6 py-4">
                     <div class="flex items-center space-x-4">
                         <!-- Avatar with online status -->
                         <div class="relative flex-shrink-0">
@@ -65,7 +65,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-baseline">
                                 <p class="text-sm font-medium text-gray-900 dark:text-white truncate">
-                                    {{ user.first_name }}
+                                    {{ user.first_name }} {{ user.last_name }}
                                 </p>
                                 <p class="text-xs text-gray-500 dark:text-gray-400">
                                     {{ details.timestamp|date:"M j, g:i a" }}
